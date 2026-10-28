@@ -25,7 +25,7 @@ For adoption, invoke `$gov-setup` in the target repo. Installing skills makes in
 | [gov-maintain](skills/gov-maintain/SKILL.md) | Repair governance drift, consolidate rules and preserve useful protection. |
 | [gov-issue](skills/gov-issue/SKILL.md) | Open one ticket (a GitHub issue by default) per pull request from a fixed template that follows the governance workflow. |
 
-New to the toolkit? Follow [getting started](docs/getting-started.md) for the first run, [usage scenarios](docs/usage-scenarios.md) for everyday use, and [troubleshooting](docs/troubleshooting.md) when something looks wrong.
+New to the toolkit? Read [how protection works](docs/how-it-works.md) for what is caught mechanically, what depends on review, and where each stops. Follow [getting started](docs/getting-started.md) for the first run, [usage scenarios](docs/usage-scenarios.md) for everyday use, and [troubleshooting](docs/troubleshooting.md) when something looks wrong.
 
 ### Which skill?
 

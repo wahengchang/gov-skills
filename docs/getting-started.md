@@ -12,6 +12,8 @@ Examples of rules it can enforce:
 
 The skills (`$gov-audit`, `$gov-setup`, ...) are helpers that inspect your project, choose these rules with you, and install the checker. After that the checker runs by itself.
 
+Want the full picture of what is caught automatically, what depends on review and what is not covered? See [how protection works](how-it-works.md).
+
 ## When do I need to do something?
 
 Most of the time, nothing. You write code as usual and CI guards it. You only step in at these moments:
