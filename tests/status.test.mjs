@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import fs from 'node:fs';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { setup } from '../skills/gov-setup/scripts/setup.mjs';
@@ -49,4 +50,17 @@ test('status CLI: JSON/text agree, exit 0 for diagnosed states, usage error for 
   assert.equal(json.status, 0); assert.equal(JSON.parse(json.stdout).state, 'ready-to-activate'); assert.match(text.stdout, /^status: ready-to-activate/);
   assert.equal(cli('status', '--root', root, '--checks', 'registry').status, 2);
   assert.equal(cli('status', '--root', path.join(root, 'nope')).status, 2);
+});
+
+test('status still diagnoses an installed runtime whose owned module is broken or missing', t => {
+  for (const damage of ['broken', 'missing']) {
+    const root = fixture(t); setup(root, 'apply');
+    if (damage === 'broken') write(root, '.governance/runtime/core.mjs', 'garbage(');
+    else fs.unlinkSync(path.join(root, '.governance/runtime/core.mjs'));
+    const run = spawnSync(process.execPath, [path.join(root, '.governance/runtime/cli.mjs'), 'status', '--root', root, '--json'], { encoding: 'utf8' });
+    assert.equal(run.status, 0, run.stderr); const result = JSON.parse(run.stdout);
+    assert.equal(result.state, 'runtime-drift'); assert.equal(result.drift[0].file, '.governance/runtime/core.mjs');
+    assert.equal(result.suggestions[0].skill, 'gov-setup');
+    if (damage === 'broken') assert.match(result.problems.join('\n'), /cannot be loaded/);
+  }
 });

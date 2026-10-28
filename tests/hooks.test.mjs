@@ -83,11 +83,27 @@ test('hook stays quiet for passes and unrelated edits, and speaks for relevant f
   run = invoke({ command: '*** Begin Patch\n*** Update File: docs/guide.md\n@@\n-a\n+b\n*** End Patch' });
   assert.match(context(run), /docs \[report\] issues/, 'apply_patch headers are attributed');
 
-  assert.equal(invoke({ file_path: 'src/app.js' }).stdout, '', 'docs finding is outside the edited file scope; budget passes');
+  // Link targets can sit outside the link check's paths, so any in-repo edit re-runs it.
+  assert.match(context(invoke({ file_path: 'src/app.js' })), /docs \[report\] issues/);
+  assert.doesNotMatch(context(invoke({ file_path: 'src/app.js' })), /budget/, 'a passing size check stays unreported');
   write(root, 'src/app.js', 'x\ny\n');
-  const budget = context(invoke({ file_path: 'src/app.js' })); assert.match(budget, /budget/); assert.doesNotMatch(budget, /absent\.md/);
-  assert.equal(invoke({ file_path: 'unrelated/notes.txt' }).stdout, '', 'unrelated edit is silent');
+  const budget = context(invoke({ file_path: 'src/app.js' })); assert.match(budget, /budget/);
+  write(root, 'docs/guide.md', '[ok](other.md)'); write(root, 'src/app.js', 'x');
+  assert.equal(invoke({ file_path: 'unrelated/notes.txt' }).stdout, '', 'all checks pass: silent');
   assert.equal(invoke({ file_path: path.join(path.dirname(root), 'outside.md') }).stdout, '', 'edit outside the repo is silent');
+  write(root, 'docs/guide.md', '[bad](absent.md)');
+  assert.equal(invoke({ file_path: path.join(path.dirname(root), 'outside.md') }).stdout, '', 'edit outside the repo stays silent despite findings');
   assert.match(context(invoke({ file_path: '.governance/config.json' })), /docs \[report\] issues/, 'contract edits re-run every quick check');
   assert.match(context(invoke({ unknown: 'shape' })), /docs \[report\] issues/, 'unattributable edit falls back to every quick check');
+});
+
+test('editing a link target outside the link check paths still reports the broken anchor', t => {
+  const root = fixture(t); setup(root, 'apply');
+  write(root, 'README.md', '# T\n\n[api](docs/a.md#setup)\n'); write(root, 'docs/a.md', '# Setup\n');
+  const config = get(root, '.governance/config.json'); config.checks.push(check('docs', 'links', ['README.md'])); write(root, '.governance/config.json', config);
+  const invoke = file => spawnSync(process.execPath, [path.join(root, '.governance/runtime/hook.mjs')], {
+    cwd: root, input: JSON.stringify({ hook_event_name: 'PostToolUse', cwd: root, tool_input: { file_path: file } }), encoding: 'utf8' });
+  assert.equal(invoke('docs/a.md').stdout, '');
+  write(root, 'docs/a.md', '# Renamed\n');
+  assert.match(JSON.parse(invoke('docs/a.md').stdout).hookSpecificOutput.additionalContext, /missing anchor #setup/);
 });

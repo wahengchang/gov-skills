@@ -1,22 +1,31 @@
 import fs from 'node:fs';
-import { object, rootPath, safePath, hash, VERSION } from './io.mjs';
-import { load, execute } from './core.mjs';
+import path from 'node:path';
+import crypto from 'node:crypto';
 
+// Drift detection must work when an owned runtime file is edited or broken, so
+// this module imports nothing from the runtime statically: the manifest check
+// uses only built-ins, and io/core load lazily for the contract and check pass.
 const MANIFEST = '.governance/manifest.json', CONFIG = '.governance/config.json', RULES = '.governance/rules.json';
+const OWNED = /^\.governance\/runtime\/[a-z][a-z0-9-]*\.mjs$/;
 
 function exists(root, file) {
-  try { fs.lstatSync(safePath(root, file, { missing: true })); return true; }
+  try { fs.lstatSync(path.join(root, file)); return true; }
   catch (e) { if (e.code === 'ENOENT') return false; throw e; }
 }
 function ownedDrift(root) {
-  const manifest = JSON.parse(fs.readFileSync(safePath(root, MANIFEST), 'utf8'));
-  if (!object(manifest) || manifest.version !== 1 || !object(manifest.files)) throw new Error('invalid ownership manifest');
+  const manifest = JSON.parse(fs.readFileSync(path.join(root, MANIFEST), 'utf8'));
+  if (manifest === null || typeof manifest !== 'object' || manifest.version !== 1 || manifest.files === null || typeof manifest.files !== 'object') throw new Error('invalid ownership manifest');
   const drift = [];
   for (const [file, digest] of Object.entries(manifest.files)) {
+    if (!OWNED.test(file)) throw new Error(`invalid owned path in manifest: ${file}`);
     let bytes = null;
-    try { bytes = fs.readFileSync(safePath(root, file)); } catch (e) { if (e.code !== 'ENOENT') throw e; }
+    try {
+      const target = path.join(root, file);
+      if (fs.lstatSync(target).isSymbolicLink()) { drift.push({ file, problem: 'symlink' }); continue; }
+      bytes = fs.readFileSync(target);
+    } catch (e) { if (e.code !== 'ENOENT') throw e; }
     if (bytes === null) drift.push({ file, problem: 'missing' });
-    else if (hash(bytes) !== digest) drift.push({ file, problem: 'modified' });
+    else if (crypto.createHash('sha256').update(bytes).digest('hex') !== digest) drift.push({ file, problem: 'modified' });
   }
   return drift;
 }
@@ -34,21 +43,26 @@ const ROUTES = {
 };
 
 export async function status(input) {
-  const root = rootPath(input);
-  const result = { version: VERSION, action: 'status', root, state: 'not-installed', manifest: false, drift: [], checks: [], activatable: [], unverified: [], problems: [], suggestions: [], exitCode: 0 };
+  const root = fs.realpathSync(input);
+  if (!fs.statSync(root).isDirectory()) throw new Error('root must be a directory');
+  let io, core, loadError;
+  try { io = await import('./io.mjs'); core = await import('./core.mjs'); }
+  catch (e) { io = core = undefined; loadError = e.message.split('\n').find(Boolean); }
+  const result = { version: io?.VERSION ?? 'unknown', action: 'status', root, state: 'not-installed', manifest: false, drift: [], checks: [], activatable: [], unverified: [], problems: [], suggestions: [], exitCode: 0 };
   const hasManifest = exists(root, MANIFEST), hasConfig = exists(root, CONFIG), hasRules = exists(root, RULES);
   result.manifest = hasManifest;
   if (hasManifest) {
     try { result.drift = ownedDrift(root); } catch (e) { result.problems.push(e.message); result.drift.push({ file: MANIFEST, problem: 'invalid' }); }
   }
   let config;
-  if (hasConfig && hasRules) {
-    try { config = load(root).config; } catch (e) { result.problems.push(e.message); }
+  if (!core && hasManifest) result.problems.push(`owned runtime cannot be loaded: ${loadError}`);
+  else if (core && hasConfig && hasRules) {
+    try { config = core.load(root).config; } catch (e) { result.problems.push(e.message); }
   }
   if (config) {
     // Built-in checks only: registered commands may mutate files or use the network.
     const quick = config.checks.filter(c => c.kind !== 'command').map(c => c.id);
-    const run = quick.length ? await execute({ root, action: 'report', selected: quick }) : { results: [], errors: [] };
+    const run = quick.length ? await core.execute({ root, action: 'report', selected: quick }) : { results: [], errors: [] };
     result.problems.push(...run.errors);
     for (const check of config.checks) {
       const item = run.results.find(r => r.check === check.id), mode = check.mode ?? 'report';
@@ -61,8 +75,8 @@ export async function status(input) {
   const enforcing = result.checks.filter(c => c.mode === 'enforce');
   if (!hasManifest && !hasConfig && !hasRules) result.state = 'not-installed';
   else if (!hasManifest || !hasConfig || !hasRules) result.state = 'partial';
+  else if (result.drift.length || !core) result.state = 'runtime-drift';
   else if (!config) result.state = 'invalid-contract';
-  else if (result.drift.length) result.state = 'runtime-drift';
   else if (enforcing.some(c => c.status === 'issues' || c.status === 'error')) result.state = 'enforce-failing';
   else if (result.activatable.length) result.state = 'ready-to-activate';
   else if (!enforcing.length || result.unverified.length || result.checks.some(c => c.status !== 'pass')) result.state = 'adopting';

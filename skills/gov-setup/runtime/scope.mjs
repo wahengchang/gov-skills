@@ -35,6 +35,8 @@ export function relevantChecks(root, config, rules, payload, quickKinds) {
     .filter(f => f && f !== '..' && !f.startsWith('../') && !path.isAbsolute(f));
   const contractEdit = files.some(f => CONTRACTS.includes(f));
   const referenced = rules.flatMap(r => [...r.scope, ...r.source, ...r.proof]);
-  return config.checks.filter(c => quickKinds.includes(c.kind) && (contractEdit
+  // A link finding can come from editing a link target outside the check's paths,
+  // so link checks stay relevant to any in-repo edit; they report only when they find something.
+  return config.checks.filter(c => quickKinds.includes(c.kind) && (contractEdit || (c.kind === 'links' && files.length > 0)
     || files.some(f => c.paths.some(p => within(f, p)) || (c.kind === 'registry' && referenced.some(p => within(f, p))))));
 }

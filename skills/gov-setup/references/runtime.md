@@ -42,7 +42,7 @@ Read-only diagnosis for routing. It never runs registered `command` checks and w
 
 JSON fields: `state`, `manifest`, `drift` (owned runtime files that are `missing`/`modified`/`invalid`), `checks` (id, kind, mode, `status` pass/issues/error/not-run, findings), `activatable` (report-mode built-in checks with zero findings), `unverified` (command checks not run), `problems`, `suggestions` (skill + reason), `exitCode`, `version`.
 
-States, in precedence order: `not-installed`, `partial` (manifest/config/rules not all present), `invalid-contract`, `runtime-drift`, `enforce-failing`, `ready-to-activate`, `adopting` (report-only, findings, or unverified commands remain), `healthy`. A state is a hint: `activatable` is not an activation (the whole batch still needs `activate`), and `healthy` covers only declared built-in checks, not registered commands or semantic coverage.
+States, in precedence order: `not-installed`, `partial` (manifest/config/rules not all present), `runtime-drift` (also when an owned runtime module cannot be loaded; drift is detected with built-ins only so `status` still works then), `invalid-contract`, `enforce-failing`, `ready-to-activate`, `adopting` (report-only, findings, or unverified commands remain), `healthy`. A state is a hint: `activatable` is not an activation (the whole batch still needs `activate`), and `healthy` covers only declared built-in checks, not registered commands or semantic coverage.
 
 ## Rule registry
 
