@@ -1,8 +1,35 @@
 # Getting started
 
-A first run in a new project, in order. Every command and output below comes from a real run of the installed skills in a temporary repository; your project's findings will differ.
+## What this does for you
 
-For day-to-day use after adoption, see [usage scenarios](usage-scenarios.md). If something looks wrong, see [troubleshooting](troubleshooting.md).
+Think of it as a spell-checker for project rules. You write down things that must not break, and an automatic check enforces them on every push. If a rule is broken, CI turns red and says which file and line. If not, nothing happens.
+
+Examples of rules it can enforce:
+
+- Links in your README and docs still point at real files and headings.
+- Your type checker or lint still passes.
+- A folder is only imported through its public entry point.
+
+The skills (`$gov-audit`, `$gov-setup`, ...) are helpers that inspect your project, choose these rules with you, and install the checker. After that the checker runs by itself.
+
+## When do I need to do something?
+
+Most of the time, nothing. You write code as usual and CI guards it. You only step in at these moments:
+
+| When | What you do |
+| --- | --- |
+| Once, at the start | Follow the steps below. About 10 minutes. |
+| Every push | Nothing. CI runs the check. Green means fine; red means read the message and fix it. |
+| The same bug comes back | `$gov-rule`: turn that lesson into an automatic check. |
+| Before merging a big change | `$gov-check`: have Codex review it. |
+| You changed behavior and docs may be stale | `$gov-doc-sync`. |
+| Every few weeks, or after many changes | `$gov-maintain`. |
+| You want more protection | Add a new small batch of checks (see [Step 5](#step-5-choose-your-first-batch)). |
+| You are not sure what to do | Run `node .governance/runtime/cli.mjs status --root .`. It tells you the state and a suggested next step. |
+
+You do not have to remember this table. Everything after setup is a reaction to something that happens. More examples are in [usage scenarios](usage-scenarios.md), and symptoms are in [troubleshooting](troubleshooting.md).
+
+Every command and output below comes from a real run of the installed skills in a temporary repository; your project's findings will differ.
 
 ## Before you begin
 
@@ -66,6 +93,8 @@ Approve it and setup applies it. The installer itself never stages or commits, a
 | `.governance/config.json` | you | Which checks exist, their mode, and their paths. |
 | `.governance/rules.json` | you | One entry per protected invariant, pointing at real files. Starts as `[]`. |
 
+Commit the whole `.governance/` directory, with your CI and `AGENTS.md` changes. CI runs the vendored checker, and teammates need the same config and rules. Stage specific files rather than `git add -A` if you have unrelated uncommitted work. `.agents/` and `skills-lock.json` are optional: commit them only if the team should share the same skill versions.
+
 ## Step 4: Look at the state
 
 ```sh
@@ -87,29 +116,42 @@ Status is a hint; it runs no registered commands and does not replace report/che
 
 ## Step 5: Choose your first batch
 
-Ask Codex to add a small batch grounded in the audit, for example:
+A "batch" is the first few things to check. You do not have to invent it. The audit from Step 2 already lists what your project has, and Codex can propose the batch from it.
+
+Ask for a proposal first. Nothing is changed by this:
 
 ```text
-$gov-setup Add one check to .governance/config.json: validate Markdown links under README.md and docs.
-Keep it in report mode. Do not activate anything yet.
+$gov-audit Based on your audit, propose a first batch of at most 3 checks.
+For each: kind, paths, why, whether running it has side effects, and how many findings you expect.
+Propose only. Do not edit any file.
 ```
 
-The entry it adds looks like this:
+Read the proposal, then have it added in `report` mode:
+
+```text
+$gov-setup Add the batch you proposed to .governance/config.json in report mode. Do not activate anything yet.
+```
+
+If you want to judge a proposal yourself, look for things the project already has:
+
+| The project already has | Check kind | Example |
+| --- | --- | --- |
+| A script that does not rewrite files (type check, lint, architecture test) in `package.json`, a Makefile or your CI | `command` | `npm run typecheck` |
+| Markdown files that link to each other | `links` | `README.md`, `docs` |
+| A bug that happened twice | a rule, via `$gov-rule` | a public export that was removed by mistake |
+| A file size limit with a real reason | `size` | only if you can justify the number |
+
+`registry` is installed by default; you do not add it.
+
+Good first batches are small (one to three checks), use existing commands, and are already clean or nearly clean, so they can be enforced quickly. A check whose findings need product changes stays in `report`; do not wait for it.
+
+An entry in `.governance/config.json` looks like this:
 
 ```json
 { "id": "docs", "kind": "links", "mode": "report", "reason": "Keep README and docs navigation valid", "paths": ["README.md", "docs"] }
 ```
 
-There are four check kinds:
-
-| Kind | Use it for |
-| --- | --- |
-| `registry` | Rule references in `rules.json` still point at real files. |
-| `links` | Relative Markdown links, images and heading anchors. No network. |
-| `size` | File size or line budgets you justify for this repo. |
-| `command` | Your own tool, run as an explicit `argv` array with no shell: typecheck, lint, an architecture test. |
-
-Prefer `command` to reuse tools the project already has. Review what a command does before registering it: it can write files or use the network, and the runner is not a sandbox. The full schema is in the [runtime contract](../skills/gov-setup/references/runtime.md).
+Review what a `command` does before registering it: it can write files or use the network, and the runner is not a sandbox. The full schema is in the [runtime contract](../skills/gov-setup/references/runtime.md).
 
 ## Step 6: Read the report
 
