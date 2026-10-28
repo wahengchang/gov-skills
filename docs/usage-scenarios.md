@@ -12,6 +12,7 @@ What to say, which skill answers, and what you get back. First-time setup is in 
 | Bring docs and generated files in line with a behavior change | `$gov-doc-sync` | Yes, docs and generated output |
 | Protect one invariant that broke before | `$gov-rule` | Yes, tests, checks and rules |
 | Repair drift and tidy rules after many changes | `$gov-maintain` | Yes, within your scope |
+| Open a ticket for planned work | `$gov-issue` | Creates the issue only |
 | Unsure, or the task spans several of the above | `$gov` | Depends on the chosen skill |
 
 Naming the skill (`$gov-check ...`) always works. A plain request can also be matched to a skill automatically. Whether a request changes anything depends on what you asked for: a review or an audit stays read-only even when it finds problems.
@@ -112,6 +113,19 @@ $gov-setup Remove the toolkit's runtime and hook. Keep our rules, docs and nativ
 ```
 
 It removes an installed hook first, then the owned runtime. Your config, rules, docs and extra files stay. Delete any CI step that calls `.governance/runtime/cli.mjs` yourself, or ask for it as part of the cleanup.
+
+## 9. Plan new work as a ticket
+
+```text
+$gov-issue Add a "retry" node type to the flow engine.
+```
+
+It creates one GitHub issue directly, with no confirmation step, from a fixed template: summary and type, scope, acceptance criteria, a workflow checklist, governance impact, and risks. The checklist is the everyday loop: develop, run `check` and your tests before push, `$gov-check` before the PR, `$gov-doc-sync` if behavior or docs changed, CI, and after merge the question "did this create something that must never break?" (if yes, `$gov-rule`).
+
+- One ticket is one pull request. If your request needs several, it proposes the split and waits for your OK before creating any ticket.
+- It searches open issues first and stops with a link if one already covers the work.
+- If `.governance/` is installed it reads `status` and records the state in the ticket. It never runs `check`, edits files or adds labels, assignees or milestones unless you ask.
+- Default tracker is GitHub through `gh`; without `gh` it uses the GitHub tool the session already has. For Jira, Linear or others it uses a connector only if one is available, otherwise it gives you the text to paste and says nothing was created.
 
 ## Good habits
 

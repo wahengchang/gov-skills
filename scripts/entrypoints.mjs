@@ -5,6 +5,7 @@ export const entrypoints = Object.freeze([
   'gov-audit',
   'gov-check',
   'gov-doc-sync',
+  'gov-issue',
   'gov-maintain',
   'gov-rule',
   'gov-setup'
