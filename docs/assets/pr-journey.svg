@@ -1,13 +1,13 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 400" width="920" height="400" role="img" aria-labelledby="t d">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 356" width="920" height="356" role="img" aria-labelledby="t d">
   <title id="t">A pull request with a pattern violation travels through the layers</title>
   <desc id="d">Two lanes carry the same violating file. In the top lane the check is in enforce mode, so CI turns red and the file never reaches branch protection. In the bottom lane the check is still in report mode, so CI stays green and the file merges with the violation. The hook, the local check and the AI review never stop it in either lane.</desc>
   <style>
     .card { fill: #f6f8fa; stroke: #d0d7de; }
     text { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; fill: #1f2328; }
     .title { font-size: 20px; font-weight: 600; }
-    .lane { font-size: 15px; font-weight: 600; }
-    .name { font-size: 14px; font-weight: 600; text-anchor: middle; }
-    .sub { font-size: 12px; text-anchor: middle; fill: #57606a; }
+    .lane { font-size: 17px; font-weight: 600; }
+    .name { font-size: 16px; font-weight: 600; text-anchor: middle; }
+    .sub { font-size: 13px; text-anchor: middle; fill: #57606a; }
     .rail { stroke: #afb8c1; stroke-width: 3; stroke-linecap: round; }
     .box { fill: #ffffff; stroke: #afb8c1; stroke-width: 2; }
     .soft { stroke-dasharray: 5 4; }
@@ -17,7 +17,7 @@
     .good { fill: #1a7f37; font-size: 15px; font-weight: 700; text-anchor: middle; }
     .warn { fill: #9a6700; font-size: 15px; font-weight: 700; text-anchor: middle; }
     .xmark { stroke: #cf222e; stroke-width: 5; stroke-linecap: round; }
-    .legend { font-size: 12px; fill: #57606a; }
+    .legend { font-size: 13px; fill: #57606a; }
 
     /* Default (and reduced motion): the final state, fully readable without animation. */
     #p1 { transform: translateX(530px); }
@@ -55,7 +55,7 @@
     @keyframes show2 { 0%, 84% { opacity: 0; } 88%, 94% { opacity: 1; } 100% { opacity: 0; } }
   </style>
 
-  <rect class="card" x="1" y="1" width="918" height="398" rx="12"/>
+  <rect class="card" x="1" y="1" width="918" height="354" rx="12"/>
   <text class="title" x="30" y="38">One file that breaks a pattern, two possible outcomes</text>
 
   <!-- Station headings (shared by both lanes) -->
@@ -87,19 +87,19 @@
   <g id="stop"><text class="bad" x="710" y="214">never reached</text></g>
 
   <!-- Lane 2: report -->
-  <text class="lane" x="30" y="262">Check is still in report mode</text>
-  <line class="rail" x1="40" y1="300" x2="850" y2="300"/>
+  <text class="lane" x="30" y="232">Check is still in report mode</text>
+  <line class="rail" x1="40" y1="270" x2="850" y2="270"/>
   <g>
-    <rect class="box soft" x="125" y="280" width="50" height="40" rx="8"/>
-    <rect class="box soft" x="265" y="280" width="50" height="40" rx="8"/>
-    <rect class="box soft" x="405" y="280" width="50" height="40" rx="8"/>
-    <rect class="box hard" x="545" y="280" width="50" height="40" rx="8"/>
-    <rect class="box hard" x="685" y="280" width="50" height="40" rx="8"/>
-    <rect class="box" x="825" y="280" width="50" height="40" rx="8"/>
+    <rect class="box soft" x="125" y="250" width="50" height="40" rx="8"/>
+    <rect class="box soft" x="265" y="250" width="50" height="40" rx="8"/>
+    <rect class="box soft" x="405" y="250" width="50" height="40" rx="8"/>
+    <rect class="box hard" x="545" y="250" width="50" height="40" rx="8"/>
+    <rect class="box hard" x="685" y="250" width="50" height="40" rx="8"/>
+    <rect class="box" x="825" y="250" width="50" height="40" rx="8"/>
   </g>
-  <g id="p2"><circle class="packet" cx="40" cy="300" r="13"/><text x="40" y="305" text-anchor="middle" style="fill:#fff;font-size:12px;font-weight:700;font-family:sans-serif">js</text></g>
-  <g id="green"><text class="good" x="570" y="344">CI green: exit 0</text></g>
-  <g id="merged"><text class="warn" x="895" y="344" style="text-anchor:end">merged with the violation</text></g>
+  <g id="p2"><circle class="packet" cx="40" cy="270" r="13"/><text x="40" y="275" text-anchor="middle" style="fill:#fff;font-size:12px;font-weight:700;font-family:sans-serif">js</text></g>
+  <g id="green"><text class="good" x="570" y="314">CI green: exit 0</text></g>
+  <g id="merged"><text class="warn" x="895" y="314" style="text-anchor:end">merged with the violation</text></g>
 
-  <text class="legend" x="30" y="382">Dashed box: cannot stop the change. Solid box: can stop it, if the check is enforced and the branch is protected.</text>
+  <text class="legend" x="30" y="340">Dashed box: cannot stop the change. Solid box: can stop it, if the check is enforced and the branch is protected.</text>
 </svg>
