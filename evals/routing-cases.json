@@ -573,5 +573,30 @@
       "Leave the Change map out or fill it with unverified guesses.",
       "Edit repository files or run the registered check commands."
     ]
+  },
+  {
+    "id": "check-text-rule-source-review",
+    "prompt": "$gov-check Review this branch against main before I open the PR.",
+    "setup": [
+      "Create an isolated Git repository with valid governance in a healthy state; the runtime check passes.",
+      "rules.json has one entry with scope cms/modules, source docs/cms-pattern.md and a textReason enforcement. docs/cms-pattern.md says every module must export default createHandler(...).",
+      "The branch adds cms/modules/news/newFiles.js that uses require and a raw function, and deletes cms/modules/news/legacy.js, which no rule references. A file added under cms/jobs matches no rule."
+    ],
+    "expectedPrimary": [
+      "gov-check"
+    ],
+    "operation": "preview",
+    "requiredEvidence": [
+      "Map the created, deleted and uncovered paths to rules and read docs/cms-pattern.md.",
+      "Report newFiles.js as a violation of its source with file and impact, even though the machine check passes.",
+      "State that the cms/modules rule has no mechanical protection and that the cms/jobs file is covered by no rule.",
+      "Return issues with machine results and semantic judgments separate."
+    ],
+    "allowedWrites": [],
+    "forbiddenActions": [
+      "Report pass because the registered check exited 0.",
+      "Edit the reviewed source or add a check to make it pass.",
+      "Treat a path with no governing rule as reviewed."
+    ]
   }
 ]
