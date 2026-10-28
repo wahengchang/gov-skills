@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
 
-export const VERSION = '0.1.0';
+export const VERSION = '0.1.1';
 export const json = value => `${JSON.stringify(value, null, 2)}\n`;
 export const hash = value => crypto.createHash('sha256').update(value).digest('hex');
 export const object = value => value !== null && typeof value === 'object' && !Array.isArray(value);
@@ -41,40 +41,49 @@ export function readJSON(root, file) {
 export function transact(root, changes) {
   const prepared = changes.map(change => {
     const file = safePath(root, change.path, { missing: true });
-    let before = null;
-    try { before = fs.readFileSync(file); } catch (e) { if (e.code !== 'ENOENT') throw e; }
+    let before = null, beforeMode = null;
+    try {
+      before = fs.readFileSync(file);
+      beforeMode = fs.statSync(file).mode & 0o7777;
+    } catch (e) { if (e.code !== 'ENOENT') throw e; }
     assert(change.before === undefined || (before === null ? null : hash(before)) === change.before,
       `file changed during operation: ${change.path}`);
-    return { ...change, file, before };
+    return { ...change, file, before, beforeMode };
   });
   const done = [], createdDirs = [], temporaries = [];
-  const write = (file, data) => {
+  const write = (file, data, mode) => {
     const parents = [];
     for (let dir = path.dirname(file); !fs.existsSync(dir); dir = path.dirname(dir)) parents.push(dir);
     for (const dir of parents.reverse()) { fs.mkdirSync(dir); createdDirs.push(dir); }
     const temp = `${file}.gov-${crypto.randomUUID()}.tmp`;
     temporaries.push(temp);
-    fs.writeFileSync(temp, data, { flag: 'wx' });
+    // New files retain the usual 0666-and-umask policy. Replacements start
+    // private, then recover the original mode independently of the umask.
+    fs.writeFileSync(temp, data, { flag: 'wx', mode: mode === null ? 0o666 : 0o600 });
+    if (mode !== null) fs.chmodSync(temp, mode);
     fs.renameSync(temp, file);
   };
   try {
     for (const change of prepared) {
       // Recheck after preflight, before each write.
       safePath(root, change.path, { missing: true });
-      let current = null;
-      try { current = fs.readFileSync(change.file); } catch (e) { if (e.code !== 'ENOENT') throw e; }
-      assert((current === null ? null : hash(current)) === (change.before === null ? null : hash(change.before)),
+      let current = null, currentMode = null;
+      try {
+        current = fs.readFileSync(change.file);
+        currentMode = fs.statSync(change.file).mode & 0o7777;
+      } catch (e) { if (e.code !== 'ENOENT') throw e; }
+      assert((current === null ? null : hash(current)) === (change.before === null ? null : hash(change.before)) && currentMode === change.beforeMode,
         `file changed during operation: ${change.path}`);
       done.push(change);
       if (change.content === null) fs.unlinkSync(change.file);
-      else write(change.file, change.content);
+      else write(change.file, change.content, change.beforeMode);
     }
   } catch (error) {
     const failures = [];
     for (const change of done.reverse()) {
       try {
         if (change.before === null) { if (fs.existsSync(change.file)) fs.unlinkSync(change.file); }
-        else write(change.file, change.before);
+        else write(change.file, change.before, change.beforeMode);
       } catch (rollback) { failures.push(`${change.path}: ${rollback.message}`); }
     }
     if (failures.length) error.message += `; rollback incomplete: ${failures.join('; ')}`;

@@ -4,9 +4,10 @@ import { fileURLToPath } from 'node:url';
 import { execFileSync } from 'node:child_process';
 import { assert, filesIn, rootPath } from '../skills/gov-setup/runtime/io.mjs';
 import { markdownLinks } from '../skills/gov-setup/runtime/markdown.mjs';
+import { entrypoints } from './entrypoints.mjs';
 
 const root = rootPath(fileURLToPath(new URL('../', import.meta.url)));
-const expected = ['gov-audit', 'gov-check', 'gov-doc-sync', 'gov-maintain', 'gov-rule', 'gov-setup'];
+const expected = entrypoints;
 const found = fs.readdirSync(path.join(root, 'skills')).filter(f => !f.startsWith('._')).sort();
 assert(JSON.stringify(found) === JSON.stringify(expected), 'unexpected skill entrypoint set');
 let links = 0, modules = 0;
@@ -19,10 +20,26 @@ for (const name of expected) {
   assert(Object.keys(fields).every(key => ['name', 'description'].includes(key)), `${name}: unsupported frontmatter`);
   assert(!/\bTODO\b|\[INSERT|\[TBD\]/.test(text), `${name}: unfinished scaffold`);
 }
-for (const file of filesIn(root, ['skills', 'scripts', 'tests', 'README.md', 'docs'])) {
+const cases = JSON.parse(fs.readFileSync(path.join(root, 'evals/routing-cases.json'), 'utf8'));
+assert(Array.isArray(cases) && cases.length > 0, 'routing acceptance cases must be a nonempty array');
+const ids = new Set();
+const strings = values => Array.isArray(values) && values.every(value => typeof value === 'string' && value.trim());
+for (const item of cases) {
+  assert(item && typeof item === 'object' && !Array.isArray(item), 'routing case must be an object');
+  assert(typeof item.id === 'string' && /^[a-z][a-z0-9-]*$/.test(item.id) && !ids.has(item.id), 'routing case id must be unique');
+  ids.add(item.id);
+  assert(typeof item.prompt === 'string' && item.prompt.trim(), `${item.id}: prompt required`);
+  assert(strings(item.setup) && item.setup.length, `${item.id}: setup facts required`);
+  assert(strings(item.expectedPrimary) && item.expectedPrimary.length && item.expectedPrimary.every(name => expected.includes(name) && name !== 'gov'), `${item.id}: unknown primary skill`);
+  assert(['inspect', 'preview', 'apply', 'update', 'remove'].includes(item.operation), `${item.id}: invalid operation`);
+  for (const field of ['requiredEvidence', 'forbiddenActions']) assert(strings(item[field]) && item[field].length, `${item.id}: ${field} required`);
+  assert(strings(item.allowedWrites), `${item.id}: allowedWrites must be an array`);
+  if (['inspect', 'preview'].includes(item.operation)) assert(item.allowedWrites.length === 0, `${item.id}: read-only cases cannot allow writes`);
+}
+for (const file of filesIn(root, ['skills', 'scripts', 'tests', 'README.md', 'docs', 'evals'])) {
   if (file.endsWith('.md')) {
     const failures = markdownLinks(root, file); assert(failures.length === 0, `${file}: ${JSON.stringify(failures)}`); links++;
   }
   if (file.endsWith('.mjs')) { execFileSync(process.execPath, ['--check', path.join(root, file)]); modules++; }
 }
-console.log(`Validated ${found.length} skills, ${links} Markdown documents, ${modules} JavaScript modules.`);
+console.log(`Validated ${found.length} skills, ${links} Markdown documents, ${modules} JavaScript modules, ${cases.length} routing case definitions (structure only).`);

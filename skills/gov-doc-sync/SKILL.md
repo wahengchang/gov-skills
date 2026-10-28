@@ -1,11 +1,11 @@
 ---
 name: gov-doc-sync
-description: Synchronize authoritative documentation and generated material with an identified code change, tracing affected consumers and distinguishing approved behavior changes from product regressions. Use when changes may make repo docs stale.
+description: Synchronize authoritative documentation and generated material for an identified change when documentation updates are requested. Trace affected consumers and distinguish approved behavior changes from regressions. Inspect only when the request is to assess stale docs; an ordinary commit review belongs to gov-check.
 ---
 
 # Reconcile a change with its documentation
 
-Establish the actual candidate: explicit base/head, staged diff, unstaged diff, or deliberately selected untracked files. Record revision and dirty-state. Do not invent a main branch or ignore untracked material in a claimed whole-worktree review. For renames/deletions follow both old and new paths and references.
+Establish the requested operation and actual candidate: explicit base/head, staged diff, unstaged diff, or deliberately selected untracked files. An assessment remains read-only; perform updates only within the user's existing authorization. Record revision and dirty-state, reusing relevant fresh evidence already in context. Do not invent a main branch or ignore untracked material in a claimed whole-worktree review. For renames/deletions follow both old and new paths and references.
 
 Trace changed externally meaningful behavior through callers/consumers, existing contracts, examples, tests, configuration and generated outputs. Search real symbols and paths instead of treating a filename list as an impact graph. Read existing navigation and authorities; preserve a single source of truth.
 
