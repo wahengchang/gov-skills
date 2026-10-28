@@ -1,0 +1,128 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 420" width="900" height="420" role="img" aria-labelledby="t d">
+  <title id="t">How $gov-check judges a change against a rule's source document</title>
+  <desc id="d">Five steps. The changed paths are matched to rules by scope. The rule's source document is read. The AI judges each path against it. It reports issues for the file that breaks the document, an ok for the harmless deletion, and rule-uncovered for the path no rule covers. No check ran for this rule, so review is the only coverage and nothing in the report blocks a merge.</desc>
+  <style>
+    .card { fill:#f6f8fa; stroke:#d0d7de; }
+    text { font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif; fill:#1f2328; font-size:13px; }
+    .title { font-size:19px; font-weight:600; }
+    .cap { font-size:15px; font-weight:600; fill:#0969da; }
+    .hd { font-size:14px; font-weight:700; }
+    .tag { font-size:12px; fill:#57606a; }
+    .box { fill:#fff; stroke:#afb8c1; stroke-width:2; }
+    .chip { fill:#fff; stroke:#d0d7de; }
+    .mono { font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; font-size:12px; }
+    .arrow { stroke:#57606a; stroke-width:2.5; fill:none; marker-end:url(#ah); }
+    .bad { fill:#cf222e; font-weight:700; }
+    .good { fill:#1a7f37; font-weight:700; }
+    .warn { fill:#9a6700; font-weight:700; }
+    .note { fill:#57606a; font-weight:600; }
+    .cap1,.cap2,.cap3,.cap4 { opacity:0; }
+    .cap5 { opacity:1; }
+    @media (prefers-reduced-motion: no-preference) {
+      #s2 { opacity:0; animation: s2 20s linear infinite; }
+      #s3 { opacity:0; animation: s3 20s linear infinite; }
+      #s4 { opacity:0; animation: s4 20s linear infinite; }
+      #r1 { opacity:0; animation: r1 20s linear infinite; }
+      #r2 { opacity:0; animation: r2 20s linear infinite; }
+      #r3 { opacity:0; animation: r3 20s linear infinite; }
+      #r4 { opacity:0; animation: r4 20s linear infinite; }
+      .cap1 { animation: c1 20s linear infinite; opacity:1; }
+      .cap2 { animation: c2 20s linear infinite; opacity:0; }
+      .cap3 { animation: c3 20s linear infinite; opacity:0; }
+      .cap4 { animation: c4 20s linear infinite; opacity:0; }
+      .cap5 { animation: c5 20s linear infinite; opacity:0; }
+      #b1 { animation: h1 20s linear infinite; }
+      #b2 { animation: h2 20s linear infinite; }
+      #b3 { animation: h3 20s linear infinite; }
+      #b4 { animation: h4 20s linear infinite; }
+      #b5 { animation: h5 20s linear infinite; }
+      @keyframes s2 { 0%,13% { opacity:0 } 16%,96% { opacity:1 } 100% { opacity:0 } }
+      @keyframes s3 { 0%,29% { opacity:0 } 32%,96% { opacity:1 } 100% { opacity:0 } }
+      @keyframes s4 { 0%,45% { opacity:0 } 48%,96% { opacity:1 } 100% { opacity:0 } }
+      @keyframes r1 { 0%,61% { opacity:0 } 64%,96% { opacity:1 } 100% { opacity:0 } }
+      @keyframes r2 { 0%,66% { opacity:0 } 69%,96% { opacity:1 } 100% { opacity:0 } }
+      @keyframes r3 { 0%,71% { opacity:0 } 74%,96% { opacity:1 } 100% { opacity:0 } }
+      @keyframes r4 { 0%,78% { opacity:0 } 81%,96% { opacity:1 } 100% { opacity:0 } }
+      @keyframes c1 { 0% { opacity:1 } 1%,13% { opacity:1 } 14%,100% { opacity:0 } }
+      @keyframes c2 { 0%,14% { opacity:0 } 15%,29% { opacity:1 } 30%,100% { opacity:0 } }
+      @keyframes c3 { 0%,30% { opacity:0 } 31%,45% { opacity:1 } 46%,100% { opacity:0 } }
+      @keyframes c4 { 0%,46% { opacity:0 } 47%,61% { opacity:1 } 62%,100% { opacity:0 } }
+      @keyframes c5 { 0%,62% { opacity:0 } 63%,95% { opacity:1 } 96%,100% { opacity:0 } }
+      @keyframes h1 { 0%,0% { stroke:#afb8c1; stroke-width:2 } 1%,13% { stroke:#0969da; stroke-width:4 } 14%,100% { stroke:#afb8c1; stroke-width:2 } }
+      @keyframes h2 { 0%,14% { stroke:#afb8c1; stroke-width:2 } 15%,29% { stroke:#0969da; stroke-width:4 } 30%,100% { stroke:#afb8c1; stroke-width:2 } }
+      @keyframes h3 { 0%,30% { stroke:#afb8c1; stroke-width:2 } 31%,45% { stroke:#0969da; stroke-width:4 } 46%,100% { stroke:#afb8c1; stroke-width:2 } }
+      @keyframes h4 { 0%,46% { stroke:#afb8c1; stroke-width:2 } 47%,61% { stroke:#0969da; stroke-width:4 } 62%,100% { stroke:#afb8c1; stroke-width:2 } }
+      @keyframes h5 { 0%,62% { stroke:#afb8c1; stroke-width:2 } 63%,95% { stroke:#0969da; stroke-width:4 } 96%,100% { stroke:#afb8c1; stroke-width:2 } }
+    }
+  </style>
+  <defs><marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#57606a"/></marker></defs>
+  <rect class="card" x="1" y="1" width="898" height="418" rx="12"/>
+  <text class="title" x="24" y="34">Semantic review: how $gov-check judges a change</text>
+  <text class="tag" x="876" y="34" text-anchor="end">illustrative run</text>
+
+  <g><text class="cap cap1" x="24" y="62">1. Someone asks for the review. Nothing starts it automatically.</text>
+     <text class="cap cap2" x="24" y="62">2. Each changed path is matched to a rule by its scope.</text>
+     <text class="cap cap3" x="24" y="62">3. The rule's source document is read.</text>
+     <text class="cap cap4" x="24" y="62">4. The AI judges each path against that document.</text>
+     <text class="cap cap5" x="24" y="62">5. It reports with evidence. No check ran, and nothing here blocks a merge.</text></g>
+
+  <!-- boxes -->
+  <rect id="b1" class="box" x="20" y="76" width="200" height="190" rx="10"/>
+  <rect id="b2" class="box" x="240" y="76" width="200" height="190" rx="10"/>
+  <rect id="b3" class="box" x="460" y="76" width="200" height="190" rx="10"/>
+  <rect id="b4" class="box" x="680" y="76" width="200" height="190" rx="10"/>
+  <text class="hd" x="34" y="100">1 Changed paths</text>
+  <text class="hd" x="254" y="100">2 Match by scope</text>
+  <text class="hd" x="474" y="100">3 Read the source</text>
+  <text class="hd" x="694" y="100">4 Judge each path</text>
+
+  <!-- 1 -->
+  <rect class="chip" x="32" y="114" width="176" height="30" rx="6"/><text class="mono" x="42" y="133">+ news/newFiles.js</text>
+  <rect class="chip" x="32" y="154" width="176" height="30" rx="6"/><text class="mono" x="42" y="173">- news/legacy.js</text>
+  <rect class="chip" x="32" y="194" width="176" height="30" rx="6"/><text class="mono" x="42" y="213">+ jobs/cleanup.js</text>
+  <text class="tag" x="34" y="246">create, delete, create</text>
+
+  <!-- 2 -->
+  <g id="s2">
+    <path class="arrow" d="M222,170 L238,170"/>
+    <rect class="chip" x="252" y="108" width="176" height="100" rx="6"/>
+    <text class="hd" x="262" y="126" style="font-size:13px">rules.json entry</text>
+    <text class="mono" x="262" y="144">scope: cms/modules</text>
+    <text class="mono" x="262" y="160">source:</text>
+    <text class="mono" x="262" y="176">docs/cms-pattern.md</text>
+    <text class="mono" x="262" y="196">textReason, no check</text>
+    <rect class="chip" x="252" y="216" width="176" height="28" rx="6" style="stroke:#9a6700"/>
+    <text class="mono warn" x="262" y="234">jobs/: no rule</text>
+    <text class="tag" x="254" y="258">news/* match, jobs/ does not</text>
+  </g>
+
+  <!-- 3 -->
+  <g id="s3">
+    <path class="arrow" d="M442,170 L458,170"/>
+    <rect class="chip" x="472" y="112" width="176" height="122" rx="6"/>
+    <text class="hd" x="482" y="132" style="font-size:13px">docs/cms-pattern.md</text>
+    <text class="mono" x="482" y="156">Every module must</text>
+    <text class="mono" x="482" y="172">export default</text>
+    <text class="mono" x="482" y="188">createHandler(...)</text>
+    <text class="tag" x="482" y="218">the rule, in words</text>
+  </g>
+
+  <!-- 4 -->
+  <g id="s4">
+    <path class="arrow" d="M662,170 L678,170"/>
+    <text class="mono bad" x="694" y="130">x newFiles.js</text>
+    <text class="tag" x="694" y="146">uses require, no handler</text>
+    <text class="mono good" x="694" y="174">ok legacy.js</text>
+    <text class="tag" x="694" y="190">no references left</text>
+    <text class="mono warn" x="694" y="218">? cleanup.js</text>
+    <text class="tag" x="694" y="234">no rule covers it</text>
+  </g>
+
+  <!-- 5 -->
+  <rect id="b5" class="box" x="20" y="282" width="860" height="124" rx="10"/>
+  <text class="hd" x="34" y="306">5 Report (text from the AI, not an exit code)</text>
+  <g id="r1"><text x="34" y="328"><tspan class="bad">issues</tspan> news/newFiles.js uses require, not createHandler (docs/cms-pattern.md)</text></g>
+  <g id="r2"><text x="34" y="348"><tspan class="good">ok</tspan> news/legacy.js removed, no references found</text></g>
+  <g id="r3"><text x="34" y="368"><tspan class="warn">rule-uncovered</tspan> jobs/cleanup.js, judged against the contracts the AI traced</text></g>
+  <g id="r4"><text class="note" x="34" y="394">Coverage: review only. No check ran for the cms/modules rule.</text></g>
+</svg>

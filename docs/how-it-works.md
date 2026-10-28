@@ -22,7 +22,7 @@ Three kinds of protection, strongest first:
 | --- | --- | --- |
 | **Design** | The invalid state cannot be written, for example a type or a module boundary. | Yes, when the build runs in CI |
 | **Mechanical** | A registered check fails, for example a lint rule or an import-rule script. | Yes, once enforced and required |
-| **Semantic** | A written rule that a reviewer or `$gov-check` judges against its source document. | **No.** Review is the only coverage |
+| **Semantic** | A written rule that a reviewer or `$gov-check` judges against its source document. [How it works](semantic-review.md) | **No.** Review is the only coverage |
 
 ## Level 2: what happens to a bad file (2 minutes)
 
