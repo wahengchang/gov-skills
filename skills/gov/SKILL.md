@@ -1,6 +1,6 @@
 ---
 name: gov
-description: Route ambiguous or multi-workflow repository governance requests to audit, setup, rule, documentation sync, check or maintenance using intent, authorization, available tools and impact. Use when governance help needs a workflow choice or combines several concerns. Clear or explicitly named tasks go directly to their matching skill; ordinary product implementation does not require this router.
+description: Route ambiguous or multi-workflow repository governance requests to audit, setup, rule, documentation sync, check, maintenance or ticket filing using intent, authorization, available tools and impact. Use when governance help needs a workflow choice or combines several concerns. Clear or explicitly named tasks go directly to their matching skill; ordinary product implementation does not require this router.
 ---
 
 # Choose the necessary governance work
@@ -19,8 +19,9 @@ Choose one primary workflow:
 | Synchronize docs/generated material for an identified change | `gov-doc-sync` |
 | Review an identified commit, PR or working-tree candidate | `gov-check` |
 | Review or repair ongoing governance drift across docs, tools and rules | `gov-maintain` |
+| Open a ticket for one identified piece of work from the fixed template | `gov-issue` |
 
-Load the selected skill from its actual available location, without assuming sibling paths. All six skills remain directly usable without this router. If a selected skill is unavailable, complete useful native investigation within scope and state the unavailable workflow; do not invent its installer, silently install dependencies, or treat missing optional integration as a failed required check.
+Load the selected skill from its actual available location, without assuming sibling paths. All seven skills remain directly usable without this router. If a selected skill is unavailable, complete useful native investigation within scope and state the unavailable workflow; do not invent its installer, silently install dependencies, or treat missing optional integration as a failed required check.
 
 Carry a small handoff in conversation: outcome/operation, candidate identity and relevant content/config fingerprints, scope traced, tool/environment observations, reviewed commands/results, unknowns and the reason for the next step. Validate incoming evidence against the current state. Reuse fresh evidence; invalidate affected results after source/config/command changes or relevant toolchain, environment or external-input changes. Extend only missing investigation. Do not persist a routing state file or put run logs in the rule registry.
 

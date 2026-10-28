@@ -23,6 +23,7 @@ For adoption, invoke `$gov-setup` in the target repo. Installing skills makes in
 | [gov-doc-sync](skills/gov-doc-sync/SKILL.md) | Reconcile changed behavior with source docs and generated material. |
 | [gov-check](skills/gov-check/SKILL.md) | Review an identified candidate with fresh mechanical and semantic evidence. |
 | [gov-maintain](skills/gov-maintain/SKILL.md) | Repair governance drift, consolidate rules and preserve useful protection. |
+| [gov-issue](skills/gov-issue/SKILL.md) | Open one ticket (a GitHub issue by default) per pull request from a fixed template that follows the governance workflow. |
 
 New to the toolkit? Follow [getting started](docs/getting-started.md) for the first run, [usage scenarios](docs/usage-scenarios.md) for everyday use, and [troubleshooting](docs/troubleshooting.md) when something looks wrong.
 
@@ -54,6 +55,7 @@ Use `$gov` when the request crosses workflows or its primary governance task is 
 - Review a commit or PR: `gov-check`; investigate unclear existing coverage: `gov-audit`.
 - Adopt/update/remove tooling: `gov-setup`; reconcile an approved change with docs: `gov-doc-sync`.
 - Add/revise/retire an invariant: `gov-rule`; repair adopted governance drift: `gov-maintain`.
+- File a ticket for planned work: `gov-issue`.
 
 Investigation can stay focused, expand to affected consumers, or become a full audit when warranted. Missing toolkit integration does not trigger setup, and read-only review does not become repair because it finds drift. New evidence can justify a specific handoff; specialists do not recurse into the router. Reuse current evidence in the conversation and invalidate affected results when the candidate, relevant configuration, commands or environment change. See the [routing contract](skills/gov/references/routing.md).
 

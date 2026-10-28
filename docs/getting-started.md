@@ -23,6 +23,7 @@ Most of the time, nothing. You write code as usual and CI guards it. You only st
 | The same bug comes back | `$gov-rule`: turn that lesson into an automatic check. |
 | Before merging a big change | `$gov-check`: have Codex review it. |
 | You changed behavior and docs may be stale | `$gov-doc-sync`. |
+| You are about to start a new piece of work | `$gov-issue`: file a ticket from the fixed template ([how](usage-scenarios.md#9-plan-new-work-as-a-ticket)). |
 | Every few weeks, or after many changes | `$gov-maintain`. |
 | You want more protection | Add a new small batch of checks (see [Step 5](#step-5-choose-your-first-batch)). |
 | You are not sure what to do | Run `node .governance/runtime/cli.mjs status --root .`. It tells you the state and a suggested next step. |

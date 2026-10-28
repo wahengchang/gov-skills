@@ -17,6 +17,8 @@ for (const name of expected) {
   assert(frontmatter, `${name}: missing frontmatter`);
   const fields = Object.fromEntries(frontmatter[1].split('\n').map(line => { const i = line.indexOf(':'); return [line.slice(0, i), line.slice(i + 1).trim()]; }));
   assert(fields.name === name && fields.description?.length > 20, `${name}: invalid name/description`);
+  // The skills CLI parses frontmatter as YAML and silently skips a skill whose plain scalar contains ": " or " #".
+  assert(!/: | #/.test(fields.description), `${name}: description is not a plain YAML scalar`);
   assert(Object.keys(fields).every(key => ['name', 'description'].includes(key)), `${name}: unsupported frontmatter`);
   assert(!/\bTODO\b|\[INSERT|\[TBD\]/.test(text), `${name}: unfinished scaffold`);
 }

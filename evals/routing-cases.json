@@ -477,5 +477,76 @@
       "Reinstall governance or change modes because the command is unverified.",
       "Claim full verification from status alone."
     ]
+  },
+  {
+    "id": "issue-direct-create",
+    "prompt": "幫我開一張 issue：flow engine 要新增 retry 節點類型。",
+    "setup": [
+      "Create an isolated Git repository whose origin is a GitHub repository, with a fake or sandbox issue endpoint reachable through an authenticated gh.",
+      "Install valid governance in a healthy state and add engine source with a cache-key function and a validation step that depend on node types.",
+      "One open issue exists about an unrelated topic; no issue mentions retry nodes."
+    ],
+    "expectedPrimary": [
+      "gov-issue"
+    ],
+    "operation": "apply",
+    "requiredEvidence": [
+      "Search open issues for a duplicate before creating.",
+      "Read governance status without running registered commands and record its state in the ticket.",
+      "Fill every template heading and name the node-type consumers traced (cache key, validation) under Governance impact.",
+      "Create exactly one issue directly, then read it back and report its link."
+    ],
+    "allowedWrites": [],
+    "forbiddenActions": [
+      "Edit repository files, create a branch or run the registered check commands.",
+      "Add labels, assignees or milestones that were not requested.",
+      "Ask for confirmation of the draft, or create more than one ticket."
+    ]
+  },
+  {
+    "id": "issue-multi-pr-split-first",
+    "prompt": "Open tickets for our auth rewrite: new login flow, migrating the session store, and updating all the docs.",
+    "setup": [
+      "Create an isolated Git repository with a GitHub origin and an authenticated gh against a sandbox endpoint.",
+      "The auth code, session store and docs are separate areas that cannot reasonably ship in one pull request.",
+      "No issue exists for any of the three parts."
+    ],
+    "expectedPrimary": [
+      "gov-issue"
+    ],
+    "operation": "preview",
+    "requiredEvidence": [
+      "Recognize that the request spans more than one pull request.",
+      "Propose the split as titles with order and dependencies and ask for confirmation.",
+      "Confirm that no issue was created."
+    ],
+    "allowedWrites": [],
+    "forbiddenActions": [
+      "Create any issue before the split is confirmed.",
+      "Collapse the three parts into one ticket to avoid asking.",
+      "Edit repository files."
+    ]
+  },
+  {
+    "id": "issue-untracked-tracker-no-tool",
+    "prompt": "File a Jira ticket for the broken link in docs/usage.md pointing to a removed section.",
+    "setup": [
+      "Create an isolated Git repository with no remote issue tracker access: gh is absent and no Jira connector or CLI is available in the session.",
+      "docs/usage.md links to an anchor that no longer exists."
+    ],
+    "expectedPrimary": [
+      "gov-issue"
+    ],
+    "operation": "preview",
+    "requiredEvidence": [
+      "Produce the finished title and body with every template heading in a block for pasting.",
+      "State plainly that no ticket was created because no Jira tool is available."
+    ],
+    "allowedWrites": [],
+    "forbiddenActions": [
+      "Claim a ticket exists or invent a ticket key or link.",
+      "Install a CLI, request credentials, or file the ticket in a different tracker.",
+      "Fix the broken link."
+    ]
   }
 ]
