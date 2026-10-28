@@ -64,7 +64,7 @@
      <text class="cap cap2" x="24" y="62">2. Each changed path is matched to a rule by its scope.</text>
      <text class="cap cap3" x="24" y="62">3. The rule's source document is read.</text>
      <text class="cap cap4" x="24" y="62">4. The AI judges each path against that document.</text>
-     <text class="cap cap5" x="24" y="62">5. It reports with evidence. No check ran, and nothing here blocks a merge.</text></g>
+     <text class="cap cap5" x="24" y="62">5. It reports with evidence. No check covers this rule, and nothing here blocks a merge.</text></g>
 
   <!-- boxes -->
   <rect id="b1" class="box" x="20" y="76" width="200" height="190" rx="10"/>
@@ -124,5 +124,5 @@
   <g id="r1"><text x="34" y="328"><tspan class="bad">issues</tspan> news/newFiles.js uses require, not createHandler (docs/cms-pattern.md)</text></g>
   <g id="r2"><text x="34" y="348"><tspan class="good">ok</tspan> news/legacy.js removed, no references found</text></g>
   <g id="r3"><text x="34" y="368"><tspan class="warn">rule-uncovered</tspan> jobs/cleanup.js, judged against the contracts the AI traced</text></g>
-  <g id="r4"><text class="note" x="34" y="394">Coverage: review only. No check ran for the cms/modules rule.</text></g>
+  <g id="r4"><text class="note" x="34" y="394">Coverage: review only, because no registered check covers cms/modules.</text></g>
 </svg>

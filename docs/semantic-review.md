@@ -26,9 +26,9 @@ The same run, step by step. The paths and rule are an illustration, not a record
 | **0. Register** | A rule in `.governance/rules.json` names the `scope`, the `source` document and a `textReason`. The runtime only checks that those paths exist. A `registry` check reports a missing one, and that fails CI only if the check is enforced. | Hard, but shallow |
 | **1. Ask** | Someone runs `$gov-check` on a branch, commit or PR. The `gov-issue` ticket checklist includes this step. CI does not run it. | Soft: it depends on someone asking |
 | **2. Identify the change** | `gov-check` records the base, head and hashes, and includes created, deleted and renamed paths. | Soft: instructions |
-| **3. Match by scope** | Each changed path is mapped to the rules whose `scope` equals it or is a parent directory. A path in no rule is listed as rule-uncovered. | Soft: instructions |
+| **3. Match by scope** | Each changed path is mapped to the rules whose `scope` equals it or is a parent directory. A path in no rule is listed as rule-uncovered, with a note on whether a registered check covers it. | Soft: instructions |
 | **4. Read the source** | The AI reads the `source` document of each matching rule, and traces real callers, consumers and docs for the change. | Soft: depends on what it reads |
-| **5. Judge and report** | It returns `pass`, `issues`, `blocked` or `partial`, with file, line, impact and a concrete correction for each finding. It keeps machine results and its own judgments separate, and states which paths had review-only coverage. | Soft: model judgment |
+| **5. Judge and report** | It returns `pass`, `issues`, `blocked` or `partial`, with file, line, impact and a concrete correction for each finding. It keeps machine results and its own judgments separate, and states which requirements had review-only coverage. | Soft: model judgment |
 
 ## How to read the result
 

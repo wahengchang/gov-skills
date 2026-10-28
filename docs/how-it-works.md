@@ -11,7 +11,7 @@ A rule goes from words to a blocked merge in five steps. The first step is only 
 ```mermaid
 flowchart LR
     A["1 Rule<br/>in words"] --> B["2 Script that<br/>fails on a<br/>bad case"]
-    B --> C["3 Check<br/>in report<br/>(never blocks)"]
+    B --> C["3 Check<br/>in report<br/>(findings<br/>don't block)"]
     C --> D["4 Check<br/>in enforce"]
     D --> E["5 CI red,<br/>merge<br/>blocked"]
 ```
@@ -22,7 +22,7 @@ Three kinds of protection, strongest first:
 | --- | --- | --- |
 | **Design** | The invalid state cannot be written, for example a type or a module boundary. | Yes, when the build runs in CI |
 | **Mechanical** | A registered check fails, for example a lint rule or an import-rule script. | Yes, once enforced and required |
-| **Semantic** | A written rule that a reviewer or `$gov-check` judges against its source document. [How it works](semantic-review.md) | **No.** Review is the only coverage |
+| **Semantic** | A written rule that a reviewer or `$gov-check` judges against its source document. [How it works](semantic-review.md) | **No.** Review, unless a separate check also covers it |
 
 ## Level 2: what happens to a bad file (2 minutes)
 
@@ -33,7 +33,7 @@ Same violating file, two situations. Top: the check is enforced. Bottom: it is s
 Read it like this:
 
 1. **Dashed stations cannot stop a change.** The hook, your local `check` and the AI review only inform.
-2. **CI can mark the commit red,** but only for an enforced check. A report-mode finding is listed and CI stays green.
+2. **CI can mark the commit red,** but only for an enforced finding. A report-mode finding is listed and CI stays green, though an execution or configuration error fails CI in any mode.
 3. **Branch protection is what blocks the merge.** It is a GitHub setting, outside this repository.
 
 What each part is:
@@ -118,9 +118,9 @@ A new check starts in `report`. `activate` makes it `enforce` only when a fresh 
 | The path is... | Covered by | A review can say |
 | --- | --- | --- |
 | In a rule's scope, rule has a check | That check, plus review of the `source` | Machine result and judgment, kept separate |
-| In a rule's scope, rule has `textReason` | Review only | "No mechanical protection exists" |
+| In a rule's scope, rule has `textReason` | Review, plus any check whose `paths` cover it | "No check is attached through this rule" |
 | Outside every rule, inside a check's `paths` | That check, if its script covers it | "Checked, no rule documents it" |
-| In neither | No registered protection | "Rule-uncovered", judged against traced contracts |
+| In neither | No registered check covers it | "Rule-uncovered", judged against traced contracts |
 
 Rule scope and check coverage are separate. The runtime does not verify that a rule's named check covers its scope. The hook uses check `paths`: it runs `links` for any edit, `registry` for paths a rule references, and every quick check when `config.json` or `rules.json` is edited.
 
@@ -186,7 +186,7 @@ Every module under `cms/modules` must `export default createHandler(...)`, as wr
 3. Register the check in `report` mode and record the rule in `rules.json`.
 4. Clear every finding, then `activate`.
 5. Make CI run `check`, require it in branch protection, and require review for `.governance/` and the check scripts.
-6. If a mechanical check is unsuitable, record a `textReason` and accept that review is the only coverage.
+6. If a mechanical check is unsuitable, record a `textReason` and accept that review is the only coverage unless a separate check also covers those paths.
 
 </details>
 
