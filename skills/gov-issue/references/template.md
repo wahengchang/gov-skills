@@ -24,7 +24,7 @@ Copy the block below. Keep every heading and the order. Replace each `<...>`. Li
 
 | Path | Action | Governing source | Protection |
 | --- | --- | --- | --- |
-| <repo-relative path> | <create \| update \| delete> | <doc, rule id or instruction file; `none found`> | <check id and mode; `text only: <reason>`; `none`> |
+| <repo-relative path> | <create \| update \| delete> | <source path (rule id), or `none found`> | <check id and mode; `text only: <reason>`; `none`> |
 
 ## Acceptance criteria
 
@@ -59,7 +59,7 @@ This ticket is delivered by one pull request.
 - One row per path the pull request will create, update or delete. A path you cannot yet name goes under Risks and unknowns instead.
 - Governing source is the document or rule that says how that path must look or behave: the `source` of a `.governance/rules.json` entry whose `scope` covers the path, otherwise the project doc or instruction file that applies. Write `none found` when there is none. Never guess one.
 - Protection is what fails if the path breaks the source: a registered check with its mode (`report` does not fail CI), `text only` with the rule's `textReason` (review is the only coverage), or `none`.
-- `delete` rows also name every rule, link or consumer that references the path (`scope`, `source` or `proof` in `rules.json`, Markdown links, imports). Deleting a referenced path breaks the registry check.
+- `delete` rows also name every rule, link or consumer that references the path (`scope`, `source` or `proof` in `rules.json`, check `paths` in `config.json`, Markdown links, imports). Deleting a referenced path makes the `registry` check report a finding; that fails CI only once the check is in `enforce` mode. A missing path in any check's `paths` is an error and fails `check` in every mode.
 - A row whose Protection is `none` or `text only` is repeated under Risks and unknowns as review-only coverage.
 
 ## Type notes

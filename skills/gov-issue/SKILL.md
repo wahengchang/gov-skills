@@ -26,8 +26,9 @@ Every path the pull request will create, update or delete gets one row: action, 
 
 - Create: look at sibling files for the established pattern and find the document or rule that states it.
 - Update: find what the current file is bound by (rule, schema, contract doc) before describing the change.
-- Delete: list everything that references the path (rule `scope`, `source` or `proof`, links, imports) and say what happens to each.
-- If `.governance/rules.json` exists, match rules whose `scope` covers the path (repo-relative paths, no globs) and copy their `source` and `enforcement`: a check id with its mode, or `textReason`. A report-mode check does not fail CI. A `textReason` rule has no mechanical protection.
+- Delete: list everything that references the path (rule `scope`, `source` or `proof`, check `paths` in `.governance/config.json`, links, imports) and say what happens to each. A missing check path is an error in every mode.
+- List only paths you can ground in the repository. Mark a planned new path as proposed, and put a path you cannot name yet under Risks and unknowns. Do not ask the user for paths.
+- If `.governance/rules.json` exists, match rules whose `scope` covers the path (it equals the path or is a parent directory; no globs) and copy their `source` and `enforcement`: a check id, with its mode taken from the `status` output or `config.json`, or `textReason`. A report-mode check does not fail CI. A `textReason` rule has no mechanical protection.
 - Write `none found` or `none` when nothing applies. Do not invent a source or protection to fill a cell. Repeat every `none` and `text only` row under Risks and unknowns as review-only coverage, and when it exposes a pattern nobody guards, say so in the invariant question.
 
 ## Fill the template
@@ -37,7 +38,8 @@ Use [the template](references/template.md) exactly: same headings, same order, e
 - Title: `[type] short summary`, at most 72 characters.
 - Write the body in the language of the request. Headings stay as in the template so tickets remain uniform.
 - Acceptance criteria are observable and testable: a behavior, a command and its expected result, a document that must say something. Not "works well".
-- Keep Scope concrete: paths in, paths and behaviors explicitly out. Add a criterion for each create or update row: the file conforms to its governing source.
+- Keep Scope concrete: paths in, paths and behaviors explicitly out.
+- For each create or update row that has a governing source, add a criterion that names the specific requirement from that source and how it is verified: a check id, or "review against <source>". Skip rows marked `none found`.
 - Do not invent facts. Unknowns go under Risks and unknowns with the question that resolves them.
 - Do not copy secrets, tokens or private logs into the body.
 
