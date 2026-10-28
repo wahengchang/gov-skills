@@ -1,6 +1,6 @@
 ---
 name: gov-setup
-description: Adopt or update repository governance after installing these skills, deploying bundled checks, project configuration and CI safely into an existing repo. Also use to preview or remove owned tooling or configure optional Codex feedback hooks. Not for writing individual rules (gov-rule) or reviewing a change (gov-check).
+description: Adopt, preview, update or remove owned repository governance tooling after skill installation, or configure explicitly requested Codex feedback hooks. Use for runtime/config/CI lifecycle operations; choose preflight for the requested operation. Missing runtime during an ordinary review is not a setup trigger. Use gov-rule for one invariant and gov-check for a candidate review.
 ---
 
 # Adopt governance into an existing repo
@@ -11,7 +11,11 @@ If the target already has `.governance/runtime/cli.mjs`, run `node .governance/r
 
 Use the actual installed directory containing this SKILL.md as `<skill>`. All required code is bundled here; no source checkout, sibling skill, package install or home-directory script is needed. Read [the runtime contract](references/runtime.md) before editing config, rules or invoking tools.
 
-Perform a fresh read-only audit, or validate available audit evidence against the current revision and dirty files. You can do this without `gov-audit` installed: inspect applicable instructions, navigation, native tools/CI and one representative entrypoint → implementation → consumer → test path. Separate facts, inferences and unknowns. Review any existing registered native commands before running them; arbitrary native commands can mutate files or access the network.
+Resolve the requested operation and explicit target root before choosing work. Preserve preview-only and removal scopes; do not run adoption steps for every lifecycle request. Read applicable instructions, Git/dirty state, installed ownership and affected integration. Reuse relevant in-context evidence after checking its current revision, content and config; no sibling skill or router is required.
+
+For initial adoption, perform a fresh read-only audit or validate an existing one: inspect navigation, native tools/CI and one representative entrypoint → implementation → consumer → test path. For an update, focus on owned runtime changes, project contracts, hooks/CI compatibility and affected checks. For removal, inspect owned paths and hook/CI references. For hooks, read the hook contract only when requested. Expand investigation when new evidence makes impact uncertain. Review registered native commands and side effects before execution; arbitrary commands can mutate files or access the network.
+
+## Adopt or preview deployment
 
 Choose a small useful batch grounded in that audit. Reuse authoritative docs and native type/lint/architecture/test commands; select explicit paths and explain each check. No generic docs hierarchy or fixed instruction budget. Product behavior changes/refactors need a separate task; keep newly adopted dependent checks in report, retain already-enforced gates, and finish independent work.
 
@@ -22,7 +26,7 @@ node "<skill>/scripts/setup.mjs" preview --root "<repo>"
 node "<skill>/scripts/setup.mjs" apply --root "<repo>"
 ```
 
-Preview is read-only. Review its actual changes and apply within the user's existing authorization; preview is not an automatic new approval checkpoint. It installs versioned runtime and a reference-integrity check in report mode. Config and rules belong to the project. Add the selected checks to that config, respecting its strict schema; never auto-discover then execute package scripts.
+Preview is read-only; a preview-only request ends with its findings before apply, config or CI edits. For adoption, review the actual changes and apply within the user's existing authorization; preview is not an automatic new approval checkpoint. Apply installs versioned runtime and a reference-integrity check in report mode. Config and rules belong to the project. Add the selected checks to that config, respecting its strict schema; never auto-discover then execute package scripts.
 
 The tool refuses unowned destination collisions, changed/missing owned runtime and symlink paths. Reconcile such conflicts explicitly; do not use reset, stash, force overwrite or delete extra files. Writes are preflighted and ordinary failures roll back; process death or disk failure may need manual reconciliation. Preserve HEAD/index, dirty content, hooks, CI and user docs.
 
@@ -30,7 +34,9 @@ Run `node .governance/runtime/cli.mjs report --root "<repo>" --json`. Repair fac
 
 Integrate `node .governance/runtime/cli.mjs check --root .` into the existing CI after its normal dependencies/tool setup. For a new GitHub workflow, adapt [the minimal template](assets/governance.yml); register required native checks first. Preserve existing jobs and permissions. Local command success is not a verified remote required gate. Add only useful navigation pointing to existing authorities and the adopted commands.
 
-To update, review a fresh `preview`, then run `update` using the newly installed skill's setup script. To remove tooling, remove the optional hook first, then `uninstall`. Neither command deletes project config, rules, docs, CI or extra user files; reconcile CI references during removal. Review the resulting diff and rerun relevant checks.
+## Update, remove or configure hooks
+
+To update, review a fresh `preview`, then run `update` using the newly installed skill's setup script. To remove tooling, inspect the owned manifest and affected integration, remove the optional hook first, then `uninstall`. The installer's preview describes deployment, not an uninstall plan. Neither update nor uninstall deletes project config, rules, docs, CI or extra user files; reconcile CI references during removal. Review the resulting diff and rerun relevant checks, reusing unaffected fresh evidence.
 
 Hooks are optional. Only when requested, read [hook integration](references/hooks.md). Skills and CI work without them.
 

@@ -12,10 +12,11 @@ Install from GitHub:
 npx skills add wahengchang/gov-skills --agent codex
 ```
 
-Then invoke `$gov-setup` in the target repo. Installing skills makes instructions and bundled resources available; setup audits the repo and deploys its independent runtime/config/CI integration. It does not run automatically during skill installation. You can install only setup with `--skill gov-setup`.
+For adoption, invoke `$gov-setup` in the target repo. Installing skills makes instructions and bundled resources available; setup audits the repo and deploys its independent runtime/config/CI integration. It does not run automatically during skill installation. You can install only setup with `--skill gov-setup`.
 
 | Skill | Use |
 | --- | --- |
+| [gov](skills/gov/SKILL.md) | Choose and coordinate workflows for an ambiguous or multi-step governance request. Optional; clear tasks can go directly to a specialist. |
 | [gov-audit](skills/gov-audit/SKILL.md) | Trace authoritative sources, real behavior, consumers and existing protection. |
 | [gov-setup](skills/gov-setup/SKILL.md) | Adopt, preview, update or remove owned tools; integrate project-specific CI. |
 | [gov-rule](skills/gov-rule/SKILL.md) | Place an invariant in suitable native protection, with a failing counterexample. |
@@ -37,9 +38,21 @@ In a target repo that already has the runtime, `node .governance/runtime/cli.mjs
 | `adopting` | `gov-audit`, `gov-rule` |
 | `healthy` | by task: `gov-check`, `gov-doc-sync`, `gov-rule`, `gov-maintain` |
 
-`gov-setup`, `gov-rule` and `gov-maintain` change repository files, so they ship an `agents/openai.yaml` with `allow_implicit_invocation: false` and run only when named. `gov-audit`, `gov-check` and `gov-doc-sync` may be chosen from the task description.
+`gov-setup` installs or removes runtime, hooks and CI integration, so it ships an `agents/openai.yaml` with `allow_implicit_invocation: false` and runs only when named (`$gov-setup`) or selected by `$gov`. Every other skill stays eligible for ordinary implicit selection. `$gov` reads the same `status` output as evidence when the runtime exists.
 
 An individual daily skill can investigate with native tools without the toolkit installed. It reports missing integration instead of silently installing it. Governance tasks complete authorized reversible governance changes; product behavior changes/refactoring remain separate work.
+
+## Adaptive routing
+
+Use `$gov` when the request crosses workflows or its primary governance task is unclear. An explicit specialist invocation or a clear single task goes directly to that skill. The router selects a primary workflow from the requested outcome, existing authorization, available tools and observed impact. It is an instruction workflow, not a background service or a new runtime command.
+
+- Review a commit or PR: `gov-check`; investigate unclear existing coverage: `gov-audit`.
+- Adopt/update/remove tooling: `gov-setup`; reconcile an approved change with docs: `gov-doc-sync`.
+- Add/revise/retire an invariant: `gov-rule`; repair adopted governance drift: `gov-maintain`.
+
+Investigation can stay focused, expand to affected consumers, or become a full audit when warranted. Missing toolkit integration does not trigger setup, and read-only review does not become repair because it finds drift. New evidence can justify a specific handoff; specialists do not recurse into the router. Reuse current evidence in the conversation and invalidate affected results when the candidate, relevant configuration, commands or environment change. See the [routing contract](skills/gov/references/routing.md).
+
+New checks start in report. Existing enforce gates retain their protection during repair or replacement: prove and activate a replacement before retiring the old gate. Routing never changes modes or skips required CI checks merely because a changed path does not overlap `command.paths`; those paths are not a dependency graph.
 
 ## Project runtime
 
@@ -69,7 +82,7 @@ node "<installed-gov-setup>/scripts/setup.mjs" update --root "<repo>"
 node "<installed-gov-setup>/scripts/setup.mjs" uninstall --root "<repo>"
 ```
 
-Conflicts, locally edited/missing owned runtime and symlinks abort before writes. There is no force overwrite. Uninstall preserves project config/rules/docs/CI and extra user files; remove obsolete CI references as part of the authorized cleanup. No staging, committing or cleaning dirty work is performed. Ordinary I/O failures roll back; process interruption or filesystem failure may need manual reconciliation.
+Conflicts, locally edited/missing owned runtime and symlinks abort before writes. There is no force overwrite. Uninstall preserves project config/rules/docs/CI and extra user files; remove obsolete CI references as part of the authorized cleanup. Replacements and rollback preserve existing POSIX file permission bits; new files follow the process umask. No staging, committing or cleaning dirty work is performed. Ordinary I/O failures roll back; process interruption or filesystem failure may need manual reconciliation.
 
 Optional [Codex edit feedback hooks](skills/gov-setup/references/hooks.md) reuse only quick built-in checks and remain advisory. They require Codex's normal trust review and real-trigger verification. Remove the owned hook before uninstalling runtime. CI and skills work independently of hooks.
 
@@ -83,5 +96,7 @@ node scripts/test-install.mjs
 ```
 
 No npm package publication or dependency installation is needed for ordinary tests. The test suite uses Node and a Python fixture to exercise distinct target tools. All fixtures are temporary; tests do not execute commands in another user repository. Product instructions and code are independently written.
+
+The [routing acceptance cases](evals/README.md) specify behavioral checks for fresh sessions, including read-only requests, absent tools, stale evidence and existing enforce gates. `npm run validate` checks corpus structure, not model routing behavior. The reviewed release list in `scripts/entrypoints.mjs` is shared by structural and real-install validation.
 
 See [validation status](docs/validation.md) for exact evidence and limits, including remote verification. No license selection or universal platform validation is implied.
