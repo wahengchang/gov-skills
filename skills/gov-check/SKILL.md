@@ -1,9 +1,13 @@
 ---
 name: gov-check
-description: Review an explicit candidate change against authoritative contracts, real callers and consumers, documentation and fresh native verification. Use for an engineering governance check before handoff or merge; defaults to read-only review.
+description: Review an explicit candidate change against authoritative contracts, real callers and consumers, documentation and fresh native verification. Use for an engineering governance check before handoff or merge; defaults to read-only review. Not for mapping a whole repository (gov-audit) or editing docs to match code (gov-doc-sync).
 ---
 
 # Check an identified candidate
+
+## Orient
+
+If `.governance/runtime/cli.mjs` exists, `node .governance/runtime/cli.mjs status --root <repo> --json` shows adopted checks, modes and owned-runtime drift without running registered commands. A `runtime-drift` or `invalid-contract` state limits what a later `check` can establish; report it. `status` never substitutes for `check`.
 
 Resolve the candidate and requested coverage first: explicit base/head or staged/unstaged/selected untracked scope. Inspect Git state, including unborn HEAD. Record actual hashes and dirty-state; never assume a branch name/base. When reviewing an entire working tree, account for staged, unstaged and untracked files. Follow rename/delete references from both versions.
 

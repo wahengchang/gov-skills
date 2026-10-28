@@ -1,9 +1,13 @@
 ---
 name: gov-doc-sync
-description: Synchronize authoritative documentation and generated material with an identified code change, tracing affected consumers and distinguishing approved behavior changes from product regressions. Use when changes may make repo docs stale.
+description: Synchronize authoritative documentation and generated material with an identified code change, tracing affected consumers and distinguishing approved behavior changes from product regressions. Use when changes may make repo docs stale. Edits docs and generated material; for a review that must not edit use gov-check.
 ---
 
 # Reconcile a change with its documentation
+
+## Orient
+
+If `.governance/runtime/cli.mjs` exists, `node .governance/runtime/cli.mjs status --root <repo> --json` lists adopted checks (for example links) that apply to the docs you will touch. It runs no registered command. If the task is only to review without editing, switch to gov-check.
 
 Establish the actual candidate: explicit base/head, staged diff, unstaged diff, or deliberately selected untracked files. Record revision and dirty-state. Do not invent a main branch or ignore untracked material in a claimed whole-worktree review. For renames/deletions follow both old and new paths and references.
 

@@ -1,9 +1,13 @@
 ---
 name: gov-rule
-description: Turn a demonstrated recurring engineering failure or invariant into the strongest suitable existing executable protection, with a failing counterexample and rule ownership. Use to add, revise or retire a governance rule.
+description: Turn a demonstrated recurring engineering failure or invariant into the strongest suitable existing executable protection, with a failing counterexample and rule ownership. Use to add, revise or retire a governance rule. For repo-wide mapping use gov-audit, for runtime install or update use gov-setup.
 ---
 
 # Place a rule where it can be enforced
+
+## Orient
+
+If `.governance/runtime/cli.mjs` exists, `node .governance/runtime/cli.mjs status --root <repo> --json` shows which checks are registered and their modes, so you can reuse one before adding another. `invalid-contract` must be repaired before registering a rule.
 
 Start from the demonstrated failure, intended invariant, owner and affected consumers. Inspect existing authorities and protection. Prefer eliminating the invalid state through architecture or types, then existing lint/architecture checks, tests or CI. Hooks are optional feedback. Use text only when mechanical enforcement is unsuitable, with a specific reason. Reuse or improve an existing check before adding a second one.
 

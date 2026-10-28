@@ -1,9 +1,13 @@
 ---
 name: gov-audit
-description: Audit an existing repository's engineering governance, trace real behavior to its authoritative sources and native checks, and identify adoption gaps with evidence. Use before governance setup or when governance coverage is unclear.
+description: Audit an existing repository's engineering governance, trace real behavior to its authoritative sources and native checks, and identify adoption gaps with evidence. Use before governance setup or when governance coverage is unclear. Read-only; to install or change tooling use gov-setup, to review a specific change use gov-check.
 ---
 
 # Audit existing governance
+
+## Orient
+
+If `.governance/runtime/cli.mjs` exists, run `node .governance/runtime/cli.mjs status --root <repo> --json` first. It is read-only and runs no registered command. Treat its `state`, `drift` and `unverified` as leads for the audit, not as findings. If it is absent, say so and continue with native tools.
 
 Produce a repository-specific map that setup or maintenance can act on. This is a read-only investigation; do not run an installer, generator, or discovered script just because it exists.
 

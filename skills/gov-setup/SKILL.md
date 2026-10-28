@@ -1,9 +1,13 @@
 ---
 name: gov-setup
-description: Adopt or update repository governance after installing these skills, deploying bundled checks, project configuration and CI safely into an existing repo. Also use to preview or remove owned tooling or configure optional Codex feedback hooks.
+description: Adopt or update repository governance after installing these skills, deploying bundled checks, project configuration and CI safely into an existing repo. Also use to preview or remove owned tooling or configure optional Codex feedback hooks. Not for writing individual rules (gov-rule) or reviewing a change (gov-check).
 ---
 
 # Adopt governance into an existing repo
+
+## Orient
+
+If the target already has `.governance/runtime/cli.mjs`, run `node .governance/runtime/cli.mjs status --root "<repo>" --json` before `preview`. `partial`, `runtime-drift` and `invalid-contract` mean reconcile before `update`; `ready-to-activate` means the next step is `activate` for the whole verified batch, not another install. Its `suggestions` are routing hints only.
 
 Use the actual installed directory containing this SKILL.md as `<skill>`. All required code is bundled here; no source checkout, sibling skill, package install or home-directory script is needed. Read [the runtime contract](references/runtime.md) before editing config, rules or invoking tools.
 

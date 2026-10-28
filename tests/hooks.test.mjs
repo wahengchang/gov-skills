@@ -61,3 +61,33 @@ test('removing hooks leaves the ordinary checker independent', t => {
   const run = spawnSync(process.execPath, [path.join(root, '.governance/runtime/cli.mjs'), 'check', '--root', root, '--json'], { encoding: 'utf8' });
   assert.equal(run.status, 0); assert.equal(JSON.parse(run.stdout).status, 'pass');
 });
+
+test('hook stays quiet for passes and unrelated edits, and speaks for relevant findings', t => {
+  const root = fixture(t); setup(root, 'apply');
+  write(root, 'docs/guide.md', '[ok](other.md)'); write(root, 'docs/other.md', '# other'); write(root, 'src/app.js', 'x');
+  const config = get(root, '.governance/config.json');
+  config.checks.push(check('docs', 'links', ['docs']), check('budget', 'size', ['src'], { maxLines: 1 }));
+  write(root, '.governance/config.json', config);
+  const invoke = (tool_input, env = {}) => spawnSync(process.execPath, [path.join(root, '.governance/runtime/hook.mjs')], {
+    cwd: root, input: JSON.stringify({ hook_event_name: 'PostToolUse', tool_name: 'Edit', cwd: root, tool_input }), encoding: 'utf8', env: { ...process.env, ...env }
+  });
+  const context = run => run.stdout ? JSON.parse(run.stdout).hookSpecificOutput.additionalContext : '';
+
+  let run = invoke({ file_path: path.join(root, 'docs/guide.md') });
+  assert.equal(run.status, 0); assert.equal(run.stdout, '', 'passing relevant check is silent');
+  assert.match(context(invoke({ file_path: 'docs/guide.md' }, { GOV_HOOK_VERBOSE: '1' })), /1 quick check\(s\) pass/);
+
+  write(root, 'docs/guide.md', '[bad](absent.md)');
+  run = invoke({ file_path: 'docs/guide.md' });
+  assert.match(context(run), /docs \[report\] issues/); assert.doesNotMatch(context(run), /budget|registry/, 'only failing relevant checks are reported');
+  run = invoke({ command: '*** Begin Patch\n*** Update File: docs/guide.md\n@@\n-a\n+b\n*** End Patch' });
+  assert.match(context(run), /docs \[report\] issues/, 'apply_patch headers are attributed');
+
+  assert.equal(invoke({ file_path: 'src/app.js' }).stdout, '', 'docs finding is outside the edited file scope; budget passes');
+  write(root, 'src/app.js', 'x\ny\n');
+  const budget = context(invoke({ file_path: 'src/app.js' })); assert.match(budget, /budget/); assert.doesNotMatch(budget, /absent\.md/);
+  assert.equal(invoke({ file_path: 'unrelated/notes.txt' }).stdout, '', 'unrelated edit is silent');
+  assert.equal(invoke({ file_path: path.join(path.dirname(root), 'outside.md') }).stdout, '', 'edit outside the repo is silent');
+  assert.match(context(invoke({ file_path: '.governance/config.json' })), /docs \[report\] issues/, 'contract edits re-run every quick check');
+  assert.match(context(invoke({ unknown: 'shape' })), /docs \[report\] issues/, 'unattributable edit falls back to every quick check');
+});

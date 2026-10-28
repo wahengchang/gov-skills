@@ -1,4 +1,4 @@
-# Runtime contract — v0.1.0
+# Runtime contract — v0.2.0
 
 Requires Node.js >=22.20.0. No npm install or Python dependency for the toolkit itself. Native commands require the target repo's own tools. The canonical runtime is the `runtime/` directory in this skill; setup vendors it to `.governance/runtime/`. CI runs that copy. Config and rules are project-owned, never deleted by update/uninstall. `.governance/manifest.json` owns only runtime paths/hashes and the optional hook definition.
 
@@ -31,6 +31,18 @@ Kinds:
 Only `.git`, `node_modules` and AppleDouble metadata are excluded from recursive built-ins. Select precise paths; do not point links at the entire repo indiscriminately. The link checker implements a practical Markdown subset, not a site renderer: setext headings, MDX expressions, HTML href links, embedded templates and framework routes require native documentation checks/semantic review. Non-Markdown fragments are flagged for manual validation. A machine pass applies only to the supported declared checks.
 
 `command.paths` records the adopted scope and verifies paths exist; the native command defines its actual coverage. Paths are not automatically appended to argv. Inspect the command's scripts/dependencies and use a non-mutating check mode. The runner is not a sandbox and cannot guarantee an approved native command is read-only. It does not install dependencies or run generators automatically. Process timeout kills the process group on POSIX; native Windows termination uses the direct child. No universal OS test claim.
+
+## Status
+
+```sh
+node .governance/runtime/cli.mjs status --root . [--json]
+```
+
+Read-only diagnosis for routing. It never runs registered `command` checks and writes nothing; built-in `registry`/`links`/`size` checks are run in report mode to learn whether they are clean. `--checks` is not accepted. Exit 0 whenever the repo could be diagnosed (invalid contracts and drift are states); 2 for an unreadable or unsafe root or usage error.
+
+JSON fields: `state`, `manifest`, `drift` (owned runtime files that are `missing`/`modified`/`invalid`), `checks` (id, kind, mode, `status` pass/issues/error/not-run, findings), `activatable` (report-mode built-in checks with zero findings), `unverified` (command checks not run), `problems`, `suggestions` (skill + reason), `exitCode`, `version`.
+
+States, in precedence order: `not-installed`, `partial` (manifest/config/rules not all present), `invalid-contract`, `runtime-drift`, `enforce-failing`, `ready-to-activate`, `adopting` (report-only, findings, or unverified commands remain), `healthy`. A state is a hint: `activatable` is not an activation (the whole batch still needs `activate`), and `healthy` covers only declared built-in checks, not registered commands or semantic coverage.
 
 ## Rule registry
 

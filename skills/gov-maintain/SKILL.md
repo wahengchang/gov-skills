@@ -1,9 +1,13 @@
 ---
 name: gov-maintain
-description: Maintain adopted repository governance by repairing documentation and tool drift, evaluating stale or duplicate rules, and preserving regression protection. Use for a scoped governance health review or cleanup after repeated changes.
+description: Maintain adopted repository governance by repairing documentation and tool drift, evaluating stale or duplicate rules, and preserving regression protection. Use for a scoped governance health review or cleanup after repeated changes. For first-time adoption use gov-setup, for a single new invariant use gov-rule.
 ---
 
 # Maintain useful protection
+
+## Orient
+
+If `.governance/runtime/cli.mjs` exists, start with `node .governance/runtime/cli.mjs status --root <repo> --json`: `runtime-drift`, `invalid-contract`, `enforce-failing` and `activatable` point at the maintenance work; `unverified` lists registered commands you must review before running. The state suggests, your declared scope decides. Missing runtime is a reportable dependency, not permission to install.
 
 Define the requested scope and a real prior record or explicit base if available. State changed-only, sampled or full coverage; no history means unknown trend, not an invented improvement metric. Inspect existing navigation, authorities, rules, adopted config, proof references, CI and runtime version/ownership. Trace representative real paths, not just file existence.
 
