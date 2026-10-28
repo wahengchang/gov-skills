@@ -1,9 +1,13 @@
 ---
 name: gov-setup
-description: Adopt, preview, update or remove owned repository governance tooling after skill installation, or configure explicitly requested Codex feedback hooks. Use for runtime/config/CI lifecycle operations; choose preflight for the requested operation. Missing runtime during an ordinary review is not a setup trigger.
+description: Adopt, preview, update or remove owned repository governance tooling after skill installation, or configure explicitly requested Codex feedback hooks. Use for runtime/config/CI lifecycle operations; choose preflight for the requested operation. Missing runtime during an ordinary review is not a setup trigger. Use gov-rule for one invariant and gov-check for a candidate review.
 ---
 
 # Adopt governance into an existing repo
+
+## Orient
+
+Resolve the requested operation first. Use this installed skill's intact bundled CLI, `node "<skill>/runtime/cli.mjs" status --root "<repo>" --json`, to inspect an older or damaged target without importing its runtime. State and suggestions are evidence, not permission to change the requested operation. `ready-to-activate` names possible report-mode candidates; only an authorized adoption task may select a complete batch, revalidate it and activate. Preview, update, removal and hook-only tasks do not activate checks. Reconcile ownership/config conflicts before an authorized update.
 
 Use the actual installed directory containing this SKILL.md as `<skill>`. All required code is bundled here; no source checkout, sibling skill, package install or home-directory script is needed. Read [the runtime contract](references/runtime.md) before editing config, rules or invoking tools.
 

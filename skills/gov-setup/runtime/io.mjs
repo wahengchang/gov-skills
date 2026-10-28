@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
 
-export const VERSION = '0.1.1';
+export const VERSION = '0.2.0';
 export const json = value => `${JSON.stringify(value, null, 2)}\n`;
 export const hash = value => crypto.createHash('sha256').update(value).digest('hex');
 export const object = value => value !== null && typeof value === 'object' && !Array.isArray(value);

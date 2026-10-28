@@ -24,6 +24,25 @@ For adoption, invoke `$gov-setup` in the target repo. Installing skills makes in
 | [gov-check](skills/gov-check/SKILL.md) | Review an identified candidate with fresh mechanical and semantic evidence. |
 | [gov-maintain](skills/gov-maintain/SKILL.md) | Repair governance drift, consolidate rules and preserve useful protection. |
 
+### Which skill?
+
+In a target repo that already has the runtime, `node .governance/runtime/cli.mjs status --root . --json` reports the governance state and suggests a skill. It is read-only, runs no registered command, and the hint never overrides the task you ask for.
+
+| State | Suggested skill |
+| --- | --- |
+| `not-installed` | `gov-audit`, then `gov-setup` |
+| `partial`, `runtime-drift` | `gov-setup` (preview, reconcile) |
+| `invalid-contract` | `gov-maintain` |
+| `enforce-failing` | `gov-check` for a recent change, `gov-maintain` for drift |
+| `ready-to-activate` | `gov-setup` for an authorized adoption task: select and revalidate the complete batch before activation |
+| `adopting` | `gov-audit`, `gov-rule` |
+| `enforced-unverified` | `gov-check` to review and run the commands not verified by status |
+| `healthy` | by task: `gov-check`, `gov-doc-sync`, `gov-rule`, `gov-maintain` |
+
+All skills remain eligible for ordinary automatic selection. The requested task and its existing authorization determine what may change; a routing hint never authorizes installation or activation. `$gov` reads `status` as evidence when available. `adoption` records report/mixed/enforced modes separately from `verification`: registered commands remain unverified until explicitly reviewed and run, even in a fully enforced repo.
+
+For an older runtime without `status`, or a damaged diagnostic entrypoint, setup can diagnose from its actual installed bundle: `node "<installed-gov-setup>/runtime/cli.mjs" status --root "<repo>" --json`. Daily skills can continue native investigation and report unavailable diagnostics without installing anything.
+
 An individual daily skill can investigate with native tools without the toolkit installed. It reports missing integration instead of silently installing it. Governance tasks complete authorized reversible governance changes; product behavior changes/refactoring remain separate work.
 
 ## Adaptive routing
@@ -43,6 +62,7 @@ New checks start in report. Existing enforce gates retain their protection durin
 Setup installs `.governance/runtime/` and `.governance/manifest.json`, and creates project-owned `config.json` and `rules.json` if absent. Its initial batch checks registry references in report mode. Adopt additional precise paths and reviewed native commands after the audit. There is no mandatory docs hierarchy or universal AGENTS size limit.
 
 ```sh
+node .governance/runtime/cli.mjs status --root . --json
 node .governance/runtime/cli.mjs report --root . --json
 # Fix all findings for the chosen batch, then revalidate and enable it together:
 node .governance/runtime/cli.mjs activate --root . --checks registry,docs

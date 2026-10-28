@@ -5,6 +5,10 @@ description: Add, revise or retire a specific governance rule for a demonstrated
 
 # Place a rule where it can be enforced
 
+## Orient
+
+If `.governance/runtime/cli.mjs` exists, `node .governance/runtime/cli.mjs status --root <repo> --json` shows which checks are registered and their modes, so you can reuse one before adding another. `invalid-contract` must be repaired before registering a rule. If this runtime predates `status` or the diagnostic cannot start, report it as unavailable and continue useful native investigation within the requested scope; do not install or repair runtime merely to obtain status.
+
 Start from the demonstrated failure, intended invariant, owner and affected consumers. Reuse relevant fresh investigation already in context and inspect missing authorities/protection. Prefer eliminating the invalid state through architecture or types, then existing lint/architecture checks, tests or CI. Hooks are optional feedback. Use text only when mechanical enforcement is unsuitable, with a specific reason. Reuse or improve an existing check before adding a second one.
 
 Within the authorized governance scope, implement the protection and prove it using an isolated counterexample: the bad case must fail for the intended reason, and the valid/fixed case must pass. Do not inject faults into the user's live worktree. Record actual cwd/revision, argv, exits and relevant output; a proof path existing or an old green run does not demonstrate effectiveness. If proving or fixing the rule requires product behavior changes/refactoring beyond scope, report that dependency and complete independent governance work.

@@ -5,6 +5,10 @@ description: Synchronize authoritative documentation and generated material for 
 
 # Reconcile a change with its documentation
 
+## Orient
+
+If `.governance/runtime/cli.mjs` exists, `node .governance/runtime/cli.mjs status --root <repo> --json` lists adopted checks (for example links) that apply to the docs you will touch. It runs no registered command. If the task is only to review without editing, switch to gov-check. If this runtime predates `status` or the diagnostic cannot start, report it as unavailable and continue useful native investigation within the requested scope; do not install or repair runtime merely to obtain status.
+
 Establish the requested operation and actual candidate: explicit base/head, staged diff, unstaged diff, or deliberately selected untracked files. An assessment remains read-only; perform updates only within the user's existing authorization. Record revision and dirty-state, reusing relevant fresh evidence already in context. Do not invent a main branch or ignore untracked material in a claimed whole-worktree review. For renames/deletions follow both old and new paths and references.
 
 Trace changed externally meaningful behavior through callers/consumers, existing contracts, examples, tests, configuration and generated outputs. Search real symbols and paths instead of treating a filename list as an impact graph. Read existing navigation and authorities; preserve a single source of truth.

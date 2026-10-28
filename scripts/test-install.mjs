@@ -37,10 +37,14 @@ try {
     const setup = path.join(project, '.agents/skills/gov-setup/scripts/setup.mjs');
     fs.writeFileSync(path.join(project, 'README.md'), 'Isolated acceptance repo.\n');
     run(process.execPath, [setup, 'apply', '--root', project], project);
+    const initial = JSON.parse(run(process.execPath, [path.join(project, '.governance/runtime/cli.mjs'), 'status', '--root', project, '--json'], project));
+    assert.equal(initial.state, 'ready-to-activate'); assert.equal(initial.adoption, 'report');
     run(process.execPath, [path.join(project, '.governance/runtime/cli.mjs'), 'report', '--root', project, '--json'], project);
     run(process.execPath, [path.join(project, '.governance/runtime/cli.mjs'), 'activate', '--root', project, '--checks', 'registry', '--json'], project);
     run(process.execPath, [path.join(project, '.governance/runtime/cli.mjs'), 'check', '--root', project], project);
+    const final = JSON.parse(run(process.execPath, [path.join(project, '.governance/runtime/cli.mjs'), 'status', '--root', project, '--json'], project));
+    assert.equal(final.state, 'healthy'); assert.equal(final.adoption, 'enforced'); assert.equal(final.verification, 'complete');
   }
   console.log(JSON.stringify({ status: 'pass', skillsCLI: '1.7.4', node: process.version,
-    assertions: [`only the ${expected.length} reviewed entrypoints`, 'real CLI copy and default installs', 'gov-setup installed alone', 'candidate removed before setup', 'runtime report/activate/check in all three projects'], observations }, null, 2));
+    assertions: [`only the ${expected.length} reviewed entrypoints`, 'real CLI copy and default installs', 'gov-setup installed alone', 'candidate removed before setup', 'runtime status/report/activate/check/status in all three projects'], observations }, null, 2));
 } finally { fs.rmSync(work, { recursive: true, force: true }); }

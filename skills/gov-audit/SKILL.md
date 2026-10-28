@@ -5,6 +5,10 @@ description: Inspect repository governance coverage and adoption gaps when no sp
 
 # Audit existing governance
 
+## Orient
+
+If `.governance/runtime/cli.mjs` exists, run `node .governance/runtime/cli.mjs status --root <repo> --json` first. It is read-only and runs no registered command. Treat its `state`, `drift` and `unverified` as leads for the audit, not as findings. If it is absent, say so and continue with native tools. If this runtime predates `status` or the diagnostic cannot start, report it as unavailable and continue useful native investigation within the requested scope; do not install or repair runtime merely to obtain status.
+
 Produce a repository-specific map that setup or maintenance can act on. This is a read-only investigation; do not run an installer, generator, or discovered script just because it exists.
 
 Establish the repo root, Git state (including unborn HEAD), worktree boundaries, and requested scope. Reuse relevant in-context investigation after checking its candidate, scope and freshness; refresh changed evidence rather than repeating an unchanged audit. Read applicable AGENTS instructions, existing navigation, build manifests, CI and representative tests. Follow at least one relevant real path from entrypoint through implementation to consumers and protection. Names and directory layouts alone do not establish authority or coverage.
