@@ -112,3 +112,16 @@ test('status CLI: JSON/text agree, exit 0 for diagnosed states, usage error for 
   assert.equal(cli('status', '--root', root, '--checks', 'registry').status, 2);
   assert.equal(cli('status', '--root', path.join(root, 'nope')).status, 2);
 });
+
+test('status still diagnoses an installed runtime whose owned module is broken or missing', t => {
+  for (const damage of ['broken', 'missing']) {
+    const root = fixture(t); setup(root, 'apply');
+    if (damage === 'broken') write(root, '.governance/runtime/core.mjs', 'garbage(');
+    else fs.unlinkSync(path.join(root, '.governance/runtime/core.mjs'));
+    const run = spawnSync(process.execPath, [path.join(root, '.governance/runtime/cli.mjs'), 'status', '--root', root, '--json'], { encoding: 'utf8' });
+    assert.equal(run.status, 0, run.stderr); const result = JSON.parse(run.stdout);
+    assert.equal(result.state, 'runtime-drift'); assert.equal(result.drift[0].file, '.governance/runtime/core.mjs');
+    assert.equal(result.suggestions[0].skill, 'gov-setup');
+    assert.equal(result.verification, 'not-run', 'diagnose from hashes without importing damaged code');
+  }
+});

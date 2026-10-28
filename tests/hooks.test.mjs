@@ -87,6 +87,10 @@ test('hook stays quiet on pass and outside-repo edits, conservatively reports li
   write(root, 'src/app.js', 'x\ny\n');
   const budget = context(invoke({ file_path: 'src/app.js' })); assert.match(budget, /budget/); assert.match(budget, /absent\.md/);
   assert.match(context(invoke({ file_path: 'unrelated/notes.txt' })), /docs \[report\] issues/, 'in-repo edits conservatively rerun links');
+  assert.doesNotMatch(context(invoke({ file_path: 'docs/guide.md' })), /budget/, 'size checks outside the edited scope stay unreported');
+  write(root, 'docs/guide.md', '[ok](other.md)'); write(root, 'src/app.js', 'x');
+  assert.equal(invoke({ file_path: 'unrelated/notes.txt' }).stdout, '', 'all checks pass: silent');
+  write(root, 'docs/guide.md', '[bad](absent.md)');
   assert.equal(invoke({ file_path: path.join(path.dirname(root), 'outside.md') }).stdout, '', 'edit outside the repo is silent');
   assert.match(context(invoke({ file_path: '.governance/config.json' })), /docs \[report\] issues/, 'contract edits re-run every quick check');
   assert.match(context(invoke({ unknown: 'shape' })), /docs \[report\] issues/, 'unattributable edit falls back to every quick check');
@@ -145,4 +149,15 @@ test('broken hook dependencies produce advisory feedback rather than uncaught im
     });
     assert.equal(run.status, 0, run.stderr); assert.match(run.stdout, /feedback error/);
   }
+});
+
+test('editing a link target outside the link check paths still reports the broken anchor', t => {
+  const root = fixture(t); setup(root, 'apply');
+  write(root, 'README.md', '# T\n\n[api](docs/a.md#setup)\n'); write(root, 'docs/a.md', '# Setup\n');
+  const config = get(root, '.governance/config.json'); config.checks.push(check('docs', 'links', ['README.md'])); write(root, '.governance/config.json', config);
+  const invoke = file => spawnSync(process.execPath, [path.join(root, '.governance/runtime/hook.mjs')], {
+    cwd: root, input: JSON.stringify({ hook_event_name: 'PostToolUse', cwd: root, tool_input: { file_path: file } }), encoding: 'utf8' });
+  assert.equal(invoke('docs/a.md').stdout, '');
+  write(root, 'docs/a.md', '# Renamed\n');
+  assert.match(JSON.parse(invoke('docs/a.md').stdout).hookSpecificOutput.additionalContext, /missing anchor #setup/);
 });
