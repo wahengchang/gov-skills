@@ -1,4 +1,4 @@
-# Runtime contract — v0.1.0
+# Runtime contract — v0.1.1
 
 Requires Node.js >=22.20.0. No npm install or Python dependency for the toolkit itself. Native commands require the target repo's own tools. The canonical runtime is the `runtime/` directory in this skill; setup vendors it to `.governance/runtime/`. CI runs that copy. Config and rules are project-owned, never deleted by update/uninstall. `.governance/manifest.json` owns only runtime paths/hashes and the optional hook definition.
 
@@ -24,11 +24,11 @@ Kinds:
 | Kind | Behavior / options |
 | --- | --- |
 | `registry` | Check all rule scope/source/proof references plus declared paths. Registry structure validation is always a prerequisite, even if this check is not selected. Reference existence does not verify behavior. |
-| `links` | Recursively check Markdown relative links, images, reference links and ATX heading/HTML id anchors within declared paths. Ignore fenced/inline code and external URIs; no network requests. |
+| `links` | Recursively check Markdown relative links, images, reference links and ATX heading/HTML id anchors within declared paths. Balanced nested link text and images inside links are checked, including both image and outer link destinations. Ignore fenced/inline code and external URIs; no network requests. |
 | `size` | Recursively measure declared files against optional positive `maxBytes` and/or `maxLines`. Only adopt budgets justified for this repo; no universal limit. |
 | `command` | Explicit nonempty `argv` array, optional `cwd` (default repo root), `timeoutMs` 1–120000 (default 30000). Shell expansion is off. Exit !=0 is a finding; spawn/timeout/signal/overflow is an error. Output limit 1 MiB. |
 
-Only `.git`, `node_modules` and AppleDouble metadata are excluded from recursive built-ins. Select precise paths; do not point links at the entire repo indiscriminately. The link checker implements a practical Markdown subset, not a site renderer: setext headings, MDX expressions, HTML href links, embedded templates and framework routes require native documentation checks/semantic review. Non-Markdown fragments are flagged for manual validation. A machine pass applies only to the supported declared checks.
+Only `.git`, `node_modules` and AppleDouble metadata are excluded from recursive built-ins. Select precise paths; do not point links at the entire repo indiscriminately. The link checker implements a practical Markdown subset, not a site renderer: multiline inline links, setext headings, MDX expressions, HTML href links, embedded templates and framework routes require native documentation checks/semantic review. Non-Markdown fragments are flagged for manual validation. A machine pass applies only to the supported declared checks.
 
 `command.paths` records the adopted scope and verifies paths exist; the native command defines its actual coverage. Paths are not automatically appended to argv. Inspect the command's scripts/dependencies and use a non-mutating check mode. The runner is not a sandbox and cannot guarantee an approved native command is read-only. It does not install dependencies or run generators automatically. Process timeout kills the process group on POSIX; native Windows termination uses the direct child. No universal OS test claim.
 
@@ -54,6 +54,6 @@ Text and `--json` expose the same results. JSON includes `action`, `root`, `resu
 
 `node "<installed-skill>/scripts/setup.mjs" preview|apply|update|uninstall --root <repo>` prints JSON with actual operation paths. Preview writes nothing and describes the current-source deployment; use update to replace a differing clean owned version. Apply is idempotent for identical content. Existing valid config/rules are preserved; if an adopted installation loses either contract, restore it rather than silently resetting adoption. Conflicts, missing/edited owned files and symlinks abort the whole preflight. Update can remove obsolete owned runtime files; uninstall only removes unchanged owned runtime/manifest, retaining extra files. No Git staging/committing/reset/stash.
 
-Writes use per-file atomic rename with preflight snapshots and best-effort rollback on ordinary failure. Multi-file process interruption/disk failure is not a transactional filesystem; inspect state and reconcile before retry. No force option. Filesystem changes by concurrent processes are outside the supported operation window.
+Writes use per-file atomic rename with preflight snapshots and best-effort rollback on ordinary failure. Replacing or restoring an existing file preserves its POSIX permission bits; new files use the process umask. Ownership, extended attributes and ACL preservation are not provided. Multi-file process interruption/disk failure is not a transactional filesystem; inspect state and reconcile before retry. No force option. Filesystem changes by concurrent processes are outside the supported operation window.
 
 Setup does not modify CI automatically: adapt the installed template or existing workflow after the repo audit, using `node .governance/runtime/cli.mjs check --root .` after native dependencies. On uninstall remove obsolete CI references within the authorized cleanup.
