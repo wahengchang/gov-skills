@@ -24,17 +24,26 @@ function real(file) {
     if (path.dirname(dir) === dir) return file;
   }
 }
-const within = (file, scope) => file === scope || file.startsWith(`${scope.replace(/\/+$/, '')}/`);
+const normalize = file => path.posix.normalize(file).replace(/\/+$/, '') || '.';
+const within = (file, scope) => scope === '.' || file === scope || file.startsWith(`${scope}/`);
+const overlaps = (file, scope) => within(file, normalize(scope)) || within(normalize(scope), file);
 
 // An edit that names no path stays relevant to every quick check.
 export function relevantChecks(root, config, rules, payload, quickKinds) {
   const raw = editedPaths(payload);
   if (!raw.length) return config.checks.filter(c => quickKinds.includes(c.kind));
-  const base = typeof payload.cwd === 'string' && path.isAbsolute(payload.cwd) ? payload.cwd : process.cwd();
+  const knownCwd = typeof payload.cwd === 'string' && path.isAbsolute(payload.cwd);
+  // Relative tool paths have no reliable base without the event's absolute cwd.
+  // Do not guess from the hook process's launch directory and prune checks.
+  if (!knownCwd && raw.some(f => !path.isAbsolute(f))) return config.checks.filter(c => quickKinds.includes(c.kind));
+  const base = knownCwd ? payload.cwd : root;
   const files = raw.map(f => path.relative(real(root), real(path.resolve(base, f))).split(path.sep).join('/'))
     .filter(f => f && f !== '..' && !f.startsWith('../') && !path.isAbsolute(f));
   const contractEdit = files.some(f => CONTRACTS.includes(f));
   const referenced = rules.flatMap(r => [...r.scope, ...r.source, ...r.proof]);
   return config.checks.filter(c => quickKinds.includes(c.kind) && (contractEdit
-    || files.some(f => c.paths.some(p => within(f, p)) || (c.kind === 'registry' && referenced.some(p => within(f, p))))));
+    // A link's destination can be outside the scanned Markdown paths. Without
+    // a reverse dependency index, any in-repo edit can invalidate a link.
+    || (c.kind === 'links' && files.length > 0)
+    || files.some(f => c.paths.some(p => overlaps(f, p)) || (c.kind === 'registry' && referenced.some(p => overlaps(f, p))))));
 }

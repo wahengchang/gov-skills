@@ -7,7 +7,7 @@ description: Review an identified commit, PR, staged change or working-tree cand
 
 ## Orient
 
-If `.governance/runtime/cli.mjs` exists, `node .governance/runtime/cli.mjs status --root <repo> --json` shows adopted checks, modes and owned-runtime drift without running registered commands. A `runtime-drift` or `invalid-contract` state limits what a later `check` can establish; report it. `status` never substitutes for `check`.
+If `.governance/runtime/cli.mjs` exists, `node .governance/runtime/cli.mjs status --root <repo> --json` shows adopted checks, modes and owned-runtime drift without running registered commands. A `runtime-drift` or `invalid-contract` state limits what a later `check` can establish; report it. `status` never substitutes for `check`. If this runtime predates `status` or the diagnostic cannot start, report it as unavailable and continue useful native investigation within the requested scope; do not install or repair runtime merely to obtain status.
 
 Resolve the candidate and requested coverage first: explicit base/head or staged/unstaged/selected untracked scope. Inspect Git state, including unborn HEAD. Record actual hashes and dirty-state; never assume a branch name/base. For a root commit with no parent, review its complete added tree against the empty tree. When reviewing an entire working tree, account for staged, unstaged and untracked files. Follow rename/delete references from both versions.
 

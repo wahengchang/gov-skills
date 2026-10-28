@@ -7,7 +7,7 @@ description: Review or clean up adopted governance after repeated changes, inclu
 
 ## Orient
 
-If `.governance/runtime/cli.mjs` exists, start with `node .governance/runtime/cli.mjs status --root <repo> --json`: `runtime-drift`, `invalid-contract`, `enforce-failing` and `activatable` point at the maintenance work; `unverified` lists registered commands you must review before running. The state suggests, your declared scope decides. Missing runtime is a reportable dependency, not permission to install.
+If `.governance/runtime/cli.mjs` exists, start with `node .governance/runtime/cli.mjs status --root <repo> --json`: `runtime-drift`, `invalid-contract`, `enforce-failing` and `activatable` point at the maintenance work; `unverified` lists registered commands you must review before running. The state suggests, your declared scope decides. Missing runtime is a reportable dependency, not permission to install. If this runtime predates `status` or the diagnostic cannot start, report it as unavailable and continue useful native investigation within the requested scope; do not install or repair runtime merely to obtain status.
 
 Define the requested operation, scope and a real prior record or explicit base if available. A health review remains read-only unless repairs are authorized. State changed-only, sampled or full coverage; no history means unknown trend, not an invented improvement metric. Reuse fresh in-context evidence for that candidate/scope and inspect missing navigation, authorities, rules, adopted config, proof references, CI and runtime ownership. Trace representative real paths, not just file existence.
 

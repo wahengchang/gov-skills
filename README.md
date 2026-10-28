@@ -34,11 +34,14 @@ In a target repo that already has the runtime, `node .governance/runtime/cli.mjs
 | `partial`, `runtime-drift` | `gov-setup` (preview, reconcile) |
 | `invalid-contract` | `gov-maintain` |
 | `enforce-failing` | `gov-check` for a recent change, `gov-maintain` for drift |
-| `ready-to-activate` | `gov-setup` (activate the verified batch) |
+| `ready-to-activate` | `gov-setup` for an authorized adoption task: select and revalidate the complete batch before activation |
 | `adopting` | `gov-audit`, `gov-rule` |
+| `enforced-unverified` | `gov-check` to review and run the commands not verified by status |
 | `healthy` | by task: `gov-check`, `gov-doc-sync`, `gov-rule`, `gov-maintain` |
 
-`gov-setup` installs or removes runtime, hooks and CI integration, so it ships an `agents/openai.yaml` with `allow_implicit_invocation: false` and runs only when named (`$gov-setup`) or selected by `$gov`. Every other skill stays eligible for ordinary implicit selection. `$gov` reads the same `status` output as evidence when the runtime exists.
+All skills remain eligible for ordinary automatic selection. The requested task and its existing authorization determine what may change; a routing hint never authorizes installation or activation. `$gov` reads `status` as evidence when available. `adoption` records report/mixed/enforced modes separately from `verification`: registered commands remain unverified until explicitly reviewed and run, even in a fully enforced repo.
+
+For an older runtime without `status`, or a damaged diagnostic entrypoint, setup can diagnose from its actual installed bundle: `node "<installed-gov-setup>/runtime/cli.mjs" status --root "<repo>" --json`. Daily skills can continue native investigation and report unavailable diagnostics without installing anything.
 
 An individual daily skill can investigate with native tools without the toolkit installed. It reports missing integration instead of silently installing it. Governance tasks complete authorized reversible governance changes; product behavior changes/refactoring remain separate work.
 

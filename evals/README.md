@@ -18,7 +18,7 @@ For the freshness case, create the earlier passing evidence by running the real 
 
 ## Installation and discovery coverage
 
-Run the relevant cases with the full toolkit and with only the specified leaf installed. The setup adoption/update/removal, native-check fallback and rule cases exercise standalone use; no sibling path may be assumed. Keep leaves other than `gov-setup` eligible for ordinary implicit selection; `gov-setup` is explicit-only (`agents/openai.yaml`), so cases expecting it must reach it through `$gov` or a named `$gov-setup` invocation, and the trace should record which. An explicit invocation test does not prove implicit selection, and neither proves that all hosts discover the same metadata.
+Run the relevant cases with the full toolkit and with only the specified leaf installed. The setup adoption/update/removal, native-check fallback and rule cases exercise standalone use; no sibling path may be assumed. All leaves remain eligible for ordinary implicit selection; record whether the session selected the skill from the raw task or reached it through an explicit invocation. An explicit invocation test does not prove implicit selection, and neither proves that all hosts discover the same metadata.
 
 The corpus also covers a root commit, read-only bilingual requests, approved generated-doc updates, mixed maintenance, missing required tools, shared-schema impact and stale evidence. Change-dependent selection must not treat `command.paths` as a dependency graph or prune required CI checks automatically.
 

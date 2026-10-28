@@ -314,7 +314,9 @@
       "Install the owned hook alongside an unrelated user hook; include a CI reference to the runtime and a separate native test job.",
       "Keep project config/rules, docs and an extra unowned file under .governance/runtime; provide a clean content/mode snapshot."
     ],
-    "expectedPrimary": ["gov-setup"],
+    "expectedPrimary": [
+      "gov-setup"
+    ],
     "operation": "remove",
     "requiredEvidence": [
       "Inspect owned paths plus affected hook/CI references without repeating an unrelated product audit.",
@@ -341,7 +343,9 @@
       "Rename a native check entrypoint in the project manifest while leaving the governance command on its old name; retain equivalent native assertions.",
       "Include an independent real product regression detected by an already-enforced contract test, with its documented promise still valid."
     ],
-    "expectedPrimary": ["gov-maintain"],
+    "expectedPrimary": [
+      "gov-maintain"
+    ],
     "operation": "apply",
     "requiredEvidence": [
       "Classify doc drift, tool drift and product regression separately and pass relevant evidence between necessary substeps.",
@@ -367,7 +371,9 @@
       "Project config and rules are valid",
       "status reports runtime-drift"
     ],
-    "expectedPrimary": ["gov-setup"],
+    "expectedPrimary": [
+      "gov-setup"
+    ],
     "operation": "preview",
     "requiredEvidence": [
       "Reads status or the setup preview and identifies the modified owned runtime file",
@@ -388,7 +394,9 @@
       "config.json contains an unknown field and a duplicate check id",
       "Product code and tests are unrelated to the failure"
     ],
-    "expectedPrimary": ["gov-maintain"],
+    "expectedPrimary": [
+      "gov-maintain"
+    ],
     "operation": "apply",
     "requiredEvidence": [
       "Reads the runtime error or status problems and repairs config against the runtime contract",
@@ -410,7 +418,10 @@
       "Governance runtime is installed with two report-mode built-in checks that have zero findings and one report-mode command check",
       "The command check has not been reviewed"
     ],
-    "expectedPrimary": ["gov-audit", "gov-maintain"],
+    "expectedPrimary": [
+      "gov-audit",
+      "gov-maintain"
+    ],
     "operation": "inspect",
     "requiredEvidence": [
       "Uses status or report to name the activatable built-in checks",
@@ -421,6 +432,50 @@
       "Run activate",
       "Execute the registered command without reviewing it",
       "Claim the whole batch is verified"
+    ]
+  },
+  {
+    "id": "preview-activatable-stays-preview",
+    "prompt": "Preview the governance runtime update. Do not apply or activate anything.",
+    "setup": [
+      "Install a valid runtime with clean owned hashes and a passing report-mode built-in check.",
+      "The status state is ready-to-activate; make a newer setup bundle available."
+    ],
+    "expectedPrimary": [
+      "gov-setup"
+    ],
+    "operation": "preview",
+    "requiredEvidence": [
+      "Use the installed bundle to diagnose the target and run the actual deployment preview.",
+      "Treat activation suggestions as hints and preserve target contents, modes, index and HEAD."
+    ],
+    "allowedWrites": [],
+    "forbiddenActions": [
+      "Run apply, update or activate.",
+      "Replace the requested preview with adoption because status has activatable checks."
+    ]
+  },
+  {
+    "id": "enforced-native-remains-enforced",
+    "prompt": "Check whether our adopted governance needs attention; do not change files.",
+    "setup": [
+      "Install valid governance with all adopted checks in enforce mode, including one offline native command.",
+      "All built-in checks pass; the native command has not been reviewed in this session."
+    ],
+    "expectedPrimary": [
+      "gov-check",
+      "gov-maintain",
+      "gov-audit"
+    ],
+    "operation": "inspect",
+    "requiredEvidence": [
+      "Distinguish enforced adoption from partial verification; status does not run native commands.",
+      "Review the command before any execution; tie any later result to the actual candidate."
+    ],
+    "allowedWrites": [],
+    "forbiddenActions": [
+      "Reinstall governance or change modes because the command is unverified.",
+      "Claim full verification from status alone."
     ]
   }
 ]

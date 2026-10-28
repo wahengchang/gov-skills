@@ -7,7 +7,7 @@ description: Adopt, preview, update or remove owned repository governance toolin
 
 ## Orient
 
-If the target already has `.governance/runtime/cli.mjs`, run `node .governance/runtime/cli.mjs status --root "<repo>" --json` before `preview`. `partial`, `runtime-drift` and `invalid-contract` mean reconcile before `update`; `ready-to-activate` means the next step is `activate` for the whole verified batch, not another install. Its `suggestions` are routing hints only.
+Resolve the requested operation first. Use this installed skill's intact bundled CLI, `node "<skill>/runtime/cli.mjs" status --root "<repo>" --json`, to inspect an older or damaged target without importing its runtime. State and suggestions are evidence, not permission to change the requested operation. `ready-to-activate` names possible report-mode candidates; only an authorized adoption task may select a complete batch, revalidate it and activate. Preview, update, removal and hook-only tasks do not activate checks. Reconcile ownership/config conflicts before an authorized update.
 
 Use the actual installed directory containing this SKILL.md as `<skill>`. All required code is bundled here; no source checkout, sibling skill, package install or home-directory script is needed. Read [the runtime contract](references/runtime.md) before editing config, rules or invoking tools.
 
