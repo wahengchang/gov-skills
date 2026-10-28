@@ -1,0 +1,14 @@
+name: Governance
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  governance:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+      # Add this repo's native dependencies before running registered commands.
+      - run: node .governance/runtime/cli.mjs check --root .
