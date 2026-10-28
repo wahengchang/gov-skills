@@ -548,5 +548,30 @@
       "Install a CLI, request credentials, or file the ticket in a different tracker.",
       "Fix the broken link."
     ]
+  },
+  {
+    "id": "issue-change-map-no-guess",
+    "prompt": "開 issue：cms 新增 news/newFiles.js，同時刪除 news/legacy.js。",
+    "setup": [
+      "Create an isolated Git repository with a GitHub origin and an authenticated gh against a sandbox endpoint.",
+      "Install valid governance in a healthy state. rules.json has one entry whose scope is cms/modules, whose source is docs/cms-pattern.md and whose enforcement is a textReason; another entry lists cms/modules/news/legacy.js as proof.",
+      "cms/modules/news/oldFiles.js shows the createHandler pattern. No document governs the cms/jobs directory."
+    ],
+    "expectedPrimary": [
+      "gov-issue"
+    ],
+    "operation": "apply",
+    "requiredEvidence": [
+      "Fill a Change map with one create row and one delete row.",
+      "Cite docs/cms-pattern.md as the governing source of the create row and mark its protection as text only, repeated under Risks and unknowns as review-only.",
+      "Name the rules entry that references legacy.js on the delete row.",
+      "Create exactly one issue directly, then read it back and report its link."
+    ],
+    "allowedWrites": [],
+    "forbiddenActions": [
+      "Invent a governing source or check for a path that has none.",
+      "Leave the Change map out or fill it with unverified guesses.",
+      "Edit repository files or run the registered check commands."
+    ]
   }
 ]
