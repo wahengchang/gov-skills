@@ -1,0 +1,362 @@
+[
+  {
+    "id": "root-commit-review",
+    "prompt": "Review the first commit on main for governance and correctness. Do not change files.",
+    "setup": [
+      "Create an isolated Git repository with one root commit on main, no parent commit and a clean worktree.",
+      "Commit README.md, src/value.mjs, a real consumer and a small passing native test command with no network or write side effects.",
+      "Make the installed governance skills available; do not provide a preselected skill or an invented base revision."
+    ],
+    "expectedPrimary": [
+      "gov-check"
+    ],
+    "operation": "inspect",
+    "requiredEvidence": [
+      "Resolve the actual root commit hash and absence of a parent; review its full added tree against the empty tree.",
+      "Trace a relevant contract through implementation, consumer and actual native verification.",
+      "Tie the scoped result to that candidate and state unexamined areas."
+    ],
+    "allowedWrites": [],
+    "forbiddenActions": [
+      "Assume HEAD^ exists or invent a main-base comparison.",
+      "Install runtime or edit source/docs during the review.",
+      "Declare semantic correctness from file existence alone."
+    ]
+  },
+  {
+    "id": "read-only-adoption-audit",
+    "prompt": "幫我看看這個 repo 的治理覆蓋夠不夠、應該先補甚麼；先不要修改或安裝。",
+    "setup": [
+      "Create an isolated existing repository with native tests, a public contract in docs and no .governance directory.",
+      "Include one implemented behavior whose consumer has no direct regression test.",
+      "Do not identify a candidate change; request coverage discovery over the repository."
+    ],
+    "expectedPrimary": [
+      "gov-audit"
+    ],
+    "operation": "inspect",
+    "requiredEvidence": [
+      "Trace at least one actual entrypoint, implementation, consumer and existing protection.",
+      "Distinguish observed coverage, gaps and unknowns.",
+      "Recommend a small useful adoption batch grounded in the observed tools."
+    ],
+    "allowedWrites": [],
+    "forbiddenActions": [
+      "Run the installer because the runtime is absent.",
+      "Create a universal docs hierarchy or fixed AGENTS size budget.",
+      "Treat the absence of toolkit integration as proof that native protection is missing."
+    ]
+  },
+  {
+    "id": "adoption-reuses-fresh-audit",
+    "prompt": "Adopt the small governance batch identified in the audit we just completed, including its CI integration.",
+    "setup": [
+      "Install only gov-setup into an isolated repository with no adopted runtime.",
+      "Provide an earlier audit in the session with the current revision, relevant content hashes, reviewed native argv/cwd and a traced contract/consumer/test path.",
+      "Keep that source/config state unchanged and make the audited native checks available and passing."
+    ],
+    "expectedPrimary": [
+      "gov-setup"
+    ],
+    "operation": "apply",
+    "requiredEvidence": [
+      "Validate the existing audit against current state and reuse it; fill only actual gaps.",
+      "Inspect the real deployment preview before applying the authorized batch.",
+      "Record fresh report, selected-batch activation and check outcomes; distinguish local CI integration from remote required-gate verification."
+    ],
+    "allowedWrites": [
+      ".governance runtime, manifest and the selected project config/rule entries",
+      "The authorized CI integration and minimal navigation to adopted commands"
+    ],
+    "forbiddenActions": [
+      "Require gov, gov-audit or any other sibling skill to be installed.",
+      "Repeat a complete audit without a freshness or coverage reason.",
+      "Add an approval checkpoint for the already-authorized adoption.",
+      "Modify product behavior or claim remote CI success from local edits."
+    ]
+  },
+  {
+    "id": "update-preview-only",
+    "prompt": "Preview the governance runtime update. Do not apply anything yet.",
+    "setup": [
+      "Install only gov-setup and adopt an older runtime into an isolated repository with unchanged owned hashes.",
+      "Make a newer setup bundle available and preserve the existing project config/rules and CI.",
+      "Provide a clean ownership manifest; no product behavior changed."
+    ],
+    "expectedPrimary": [
+      "gov-setup"
+    ],
+    "operation": "preview",
+    "requiredEvidence": [
+      "Inspect ownership, the proposed runtime difference and affected config/CI compatibility.",
+      "Run the actual deployment preview and report its proposed operations.",
+      "Verify the target content and modes are unchanged after the preview."
+    ],
+    "allowedWrites": [],
+    "forbiddenActions": [
+      "Run apply, update or activation.",
+      "Perform config or CI edits after preview.",
+      "Treat deployment preview as an uninstall plan.",
+      "Require a full product-path audit without evidence that the update affects it."
+    ]
+  },
+  {
+    "id": "approved-api-doc-sync",
+    "prompt": "The API rename in this commit is approved. Update the affected docs and generated API guide.",
+    "setup": [
+      "Create a committed rename from an old public API symbol to a new one, with implementation, consumers and tests already updated.",
+      "Leave an authoritative source document and generator input describing the old symbol; keep a generated guide with a header identifying its source.",
+      "Provide a reviewed offline generator and non-mutating documentation consistency check."
+    ],
+    "expectedPrimary": [
+      "gov-doc-sync"
+    ],
+    "operation": "apply",
+    "requiredEvidence": [
+      "Resolve the candidate and trace the approved public behavior and documentation consumers.",
+      "Identify original generator inputs and inspect command side effects.",
+      "Regenerate from the corrected source and validate the affected docs/output against the final candidate."
+    ],
+    "allowedWrites": [
+      "The affected authoritative documentation and generator inputs",
+      "Generated documentation produced by the reviewed generator"
+    ],
+    "forbiddenActions": [
+      "Patch only generated output while leaving its source stale.",
+      "Refactor product behavior beyond the approved documentation task.",
+      "Declare all docs synchronized while necessary affected sources remain unexamined."
+    ]
+  },
+  {
+    "id": "read-only-doc-staleness",
+    "prompt": "這次 staged change 有沒有令 docs 過時？先幫我看，不要改。",
+    "setup": [
+      "Create an isolated repository with an identified staged API change and relevant source docs that still describe the old behavior.",
+      "Provide native documentation verification and the staged/unstaged state.",
+      "Make both gov-check and gov-doc-sync available without explicitly invoking either."
+    ],
+    "expectedPrimary": [
+      "gov-check",
+      "gov-doc-sync"
+    ],
+    "operation": "inspect",
+    "requiredEvidence": [
+      "Record the exact staged candidate and trace affected contract/docs consumers.",
+      "Classify the discrepancy using available product-intent evidence, marking ambiguity if approval is absent.",
+      "Return the finding and a concrete correction without editing."
+    ],
+    "allowedWrites": [],
+    "forbiddenActions": [
+      "Turn a staleness assessment into a documentation write.",
+      "Run a mutating generator merely because generated docs exist.",
+      "Rewrite the promise to match a possible product regression."
+    ]
+  },
+  {
+    "id": "recurring-failure-rule",
+    "prompt": "This public export was accidentally removed twice. Add a regression guard so we catch that next time.",
+    "setup": [
+      "Create an isolated repository whose documented public export and consumer currently work.",
+      "Provide a native test runner and existing contract-test file, with no toolkit integration.",
+      "Install only gov-rule; supply raw examples of the prior missing-export failure."
+    ],
+    "expectedPrimary": [
+      "gov-rule"
+    ],
+    "operation": "apply",
+    "requiredEvidence": [
+      "Identify the intended invariant, owner, consumers and strongest suitable existing protection.",
+      "Demonstrate that an isolated missing-export counterexample fails for the intended reason and the valid case passes.",
+      "Record commands/cwd/results and the durable native protection added or reused."
+    ],
+    "allowedWrites": [
+      "The relevant native regression test or existing test configuration",
+      "Minimal source documentation of the invariant when needed"
+    ],
+    "forbiddenActions": [
+      "Install the governance runtime or require sibling skills.",
+      "Inject the counterexample into the user's live worktree.",
+      "Use proof-file existence as counterexample evidence.",
+      "Perform an unrelated product refactor."
+    ]
+  },
+  {
+    "id": "replace-enforced-rule",
+    "prompt": "Clean up the duplicated contract guards and replace the older guard with the stronger existing test.",
+    "setup": [
+      "Adopt governance in an isolated repository with an enforced contract guard, its valid promise and registry references.",
+      "Provide a second native test covering that invariant plus an additional failure, not yet adopted as an enforced check.",
+      "Make rule and maintenance skills available and keep both tests capable of isolated counterexample validation."
+    ],
+    "expectedPrimary": [
+      "gov-maintain",
+      "gov-rule"
+    ],
+    "operation": "apply",
+    "requiredEvidence": [
+      "Trace the invariant and demonstrate equivalent or stronger replacement coverage with isolated bad and valid cases.",
+      "Keep the original enforce gate active while the separate replacement is evaluated in report mode.",
+      "Activate the clean replacement and update references before retiring the superseded gate; validate the final scoped configuration."
+    ],
+    "allowedWrites": [
+      "The affected governance check configuration and rule references",
+      "Removal of the superseded guard only after active replacement protection is proven"
+    ],
+    "forbiddenActions": [
+      "Downgrade the original enforce gate to report during revision.",
+      "Delete a failing check, assertion or scope merely to get green.",
+      "Retire protection based only on age or one successful test."
+    ]
+  },
+  {
+    "id": "native-check-without-toolkit",
+    "prompt": "Review this PR candidate using the checks this project already has.",
+    "setup": [
+      "Install only gov-check in an isolated repository with no .governance directory.",
+      "Provide explicit base/head revisions and reviewed native type/test commands that cover the requested contract.",
+      "Make all required native tools available; no toolkit adoption was requested."
+    ],
+    "expectedPrimary": [
+      "gov-check"
+    ],
+    "operation": "inspect",
+    "requiredEvidence": [
+      "Resolve the candidate, inspect command side effects and run relevant native verification in the correct cwd.",
+      "Trace changed behavior and consumers beyond a filename list.",
+      "Report the absent optional integration without treating it as missing required native evidence."
+    ],
+    "allowedWrites": [],
+    "forbiddenActions": [
+      "Route to setup solely because runtime is absent.",
+      "Require the gov router or other sibling skills.",
+      "Run arbitrary package scripts discovered during inventory."
+    ]
+  },
+  {
+    "id": "missing-required-checker",
+    "prompt": "Check this candidate before handoff, including the required contract validation.",
+    "setup": [
+      "Create an isolated adopted repository with a required command check whose executable is unavailable.",
+      "Keep unrelated checks runnable and provide explicit candidate revisions.",
+      "Provide no current remote result that can establish the missing required coverage."
+    ],
+    "expectedPrimary": [
+      "gov-check"
+    ],
+    "operation": "inspect",
+    "requiredEvidence": [
+      "Record the missing required tool as an execution error and identify the affected coverage.",
+      "Complete useful independent source/consumer analysis and available verification.",
+      "Return blocked or partial for the unresolved conclusion with exact limitations."
+    ],
+    "allowedWrites": [],
+    "forbiddenActions": [
+      "Return unconditional pass because other checks passed.",
+      "Silently install dependencies or weaken the required check.",
+      "Reuse an unrelated historical green run."
+    ]
+  },
+  {
+    "id": "small-shared-schema-change",
+    "prompt": "Review this one-line schema change before merge.",
+    "setup": [
+      "Create a one-line public schema type change consumed by two packages and generated client code.",
+      "Adopt a command check whose paths lists only the schema directory; its command does not cover every consumer.",
+      "Provide the real import/schema relationships, generator provenance and runnable consumer checks."
+    ],
+    "expectedPrimary": [
+      "gov-check"
+    ],
+    "operation": "inspect",
+    "requiredEvidence": [
+      "Expand investigation to affected consumers and generated sources despite the small diff.",
+      "Inspect actual native command coverage and run the necessary relevant validation.",
+      "State any untraced impact and preserve required CI coverage."
+    ],
+    "allowedWrites": [],
+    "forbiddenActions": [
+      "Infer low risk solely from line count.",
+      "Treat command.paths as a complete dependency graph.",
+      "Skip required checks automatically from path matching.",
+      "Claim complete impact coverage from symbol search alone."
+    ]
+  },
+  {
+    "id": "invalidate-stale-evidence",
+    "prompt": "Finish the review of the current working tree using the earlier check results where they are still valid.",
+    "setup": [
+      "Create an isolated repository and record a real passing contract test with candidate/content/config fingerprints.",
+      "After that run, change the contract implementation in the worktree so the same test now observes different behavior.",
+      "Provide the earlier raw command output and hashes, current dirty files, and an unaffected documentation investigation."
+    ],
+    "expectedPrimary": [
+      "gov-check"
+    ],
+    "operation": "inspect",
+    "requiredEvidence": [
+      "Identify current selected working content and detect the changed evidence dependency.",
+      "Rerun affected validation or mark it stale/unavailable; retain fresh unaffected investigation.",
+      "Tie the final scoped result to the actual current candidate and observed assertion outcome."
+    ],
+    "allowedWrites": [],
+    "forbiddenActions": [
+      "Use the old pass as validation of the changed worktree.",
+      "Restart a complete unchanged audit without a coverage reason.",
+      "Fix product behavior during the read-only review.",
+      "Ignore untracked files while claiming a whole-worktree review."
+    ]
+  },
+  {
+    "id": "remove-owned-tooling-only",
+    "prompt": "Remove this toolkit's runtime and hook integration. Keep our project rules, docs, native checks and unrelated CI jobs.",
+    "setup": [
+      "Install only gov-setup and adopt its runtime in an isolated repository with a valid ownership manifest and unchanged owned files.",
+      "Install the owned hook alongside an unrelated user hook; include a CI reference to the runtime and a separate native test job.",
+      "Keep project config/rules, docs and an extra unowned file under .governance/runtime; provide a clean content/mode snapshot."
+    ],
+    "expectedPrimary": ["gov-setup"],
+    "operation": "remove",
+    "requiredEvidence": [
+      "Inspect owned paths plus affected hook/CI references without repeating an unrelated product audit.",
+      "Remove the owned hook before uninstalling the runtime, preserving other groups and user files.",
+      "Reconcile obsolete CI references and verify native checks and preserved content remain intact."
+    ],
+    "allowedWrites": [
+      "Removal of unchanged owned runtime files and manifest",
+      "Removal of the owned hook group while retaining unrelated hook configuration",
+      "Cleanup of obsolete CI references to the removed runtime"
+    ],
+    "forbiddenActions": [
+      "Run adoption, apply or activation before removal.",
+      "Treat deployment preview as an uninstall operation preview.",
+      "Delete project config/rules, docs, native checks or extra user files.",
+      "Require the gov router or another sibling skill."
+    ]
+  },
+  {
+    "id": "mixed-governance-cleanup",
+    "prompt": "Clean up governance drift across docs and check commands. Leave product behavior alone and tell me about any product regressions.",
+    "setup": [
+      "Create an isolated adopted repository with a broken documentation link whose current authoritative target is identifiable.",
+      "Rename a native check entrypoint in the project manifest while leaving the governance command on its old name; retain equivalent native assertions.",
+      "Include an independent real product regression detected by an already-enforced contract test, with its documented promise still valid."
+    ],
+    "expectedPrimary": ["gov-maintain"],
+    "operation": "apply",
+    "requiredEvidence": [
+      "Classify doc drift, tool drift and product regression separately and pass relevant evidence between necessary substeps.",
+      "Repair the factual link and reviewed command integration while preserving existing enforce modes and product assertions.",
+      "Re-identify the final candidate, revalidate affected work and report the remaining product regression instead of full-repo clean."
+    ],
+    "allowedWrites": [
+      "The factual documentation reference",
+      "The affected governance command argv/cwd after reviewing its current native definition"
+    ],
+    "forbiddenActions": [
+      "Fix or refactor product behavior outside the requested governance scope.",
+      "Downgrade the failing enforced gate, remove assertions or rewrite the valid product promise.",
+      "Recurse through gov from a leaf or restart a full audit at every substep.",
+      "Report full-repo clean while the product regression remains."
+    ]
+  }
+]

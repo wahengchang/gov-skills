@@ -1,13 +1,13 @@
 ---
 name: gov-audit
-description: Audit an existing repository's engineering governance, trace real behavior to its authoritative sources and native checks, and identify adoption gaps with evidence. Use before governance setup or when governance coverage is unclear.
+description: Inspect repository governance coverage and adoption gaps when no specific candidate change is the review target. Use for a read-only governance inventory or evidence needed before adoption; trace real behavior, authoritative sources and existing native protection. Use gov-check for an identified commit or worktree review.
 ---
 
 # Audit existing governance
 
 Produce a repository-specific map that setup or maintenance can act on. This is a read-only investigation; do not run an installer, generator, or discovered script just because it exists.
 
-Establish the repo root, Git state (including unborn HEAD), worktree boundaries, and requested scope. Read applicable AGENTS instructions, existing navigation, build manifests, CI and representative tests. Follow at least one relevant real path from entrypoint through implementation to consumers and protection. Names and directory layouts alone do not establish authority or coverage.
+Establish the repo root, Git state (including unborn HEAD), worktree boundaries, and requested scope. Reuse relevant in-context investigation after checking its candidate, scope and freshness; refresh changed evidence rather than repeating an unchanged audit. Read applicable AGENTS instructions, existing navigation, build manifests, CI and representative tests. Follow at least one relevant real path from entrypoint through implementation to consumers and protection. Names and directory layouts alone do not establish authority or coverage.
 
 For each relevant promise record:
 

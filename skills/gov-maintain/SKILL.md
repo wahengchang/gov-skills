@@ -1,13 +1,13 @@
 ---
 name: gov-maintain
-description: Maintain adopted repository governance by repairing documentation and tool drift, evaluating stale or duplicate rules, and preserving regression protection. Use for a scoped governance health review or cleanup after repeated changes.
+description: Review or clean up adopted governance after repeated changes, including documentation drift, tool drift and stale or duplicate rules. Use for ongoing governance health across these concerns; respect read-only review requests. Use gov-doc-sync for one documentation change and gov-rule for a specific invariant.
 ---
 
 # Maintain useful protection
 
-Define the requested scope and a real prior record or explicit base if available. State changed-only, sampled or full coverage; no history means unknown trend, not an invented improvement metric. Inspect existing navigation, authorities, rules, adopted config, proof references, CI and runtime version/ownership. Trace representative real paths, not just file existence.
+Define the requested operation, scope and a real prior record or explicit base if available. A health review remains read-only unless repairs are authorized. State changed-only, sampled or full coverage; no history means unknown trend, not an invented improvement metric. Reuse fresh in-context evidence for that candidate/scope and inspect missing navigation, authorities, rules, adopted config, proof references, CI and runtime ownership. Trace representative real paths, not just file existence.
 
-Classify findings as doc drift, tool/harness drift, product regression or ambiguous intent. Repair reversible governance drift within the user's authorization. Product behavior fixes/refactors remain a separate task; newly adopted dependent checks stay report, and already-enforced gates retain their mode and protection. Continue independent work while a product decision is pending.
+Classify findings as doc drift, tool/harness drift, product regression or ambiguous intent. Repair reversible governance drift within the user's authorization. Use available gov-doc-sync methods for documentation, gov-rule methods for rule changes, and the setup ownership workflow for runtime changes; no sibling skill is required for independent work. Pass the relevant evidence forward instead of starting another full audit or routing back through gov. Product behavior fixes/refactors remain a separate task; newly adopted dependent checks stay report, and already-enforced gates retain their mode and protection. Continue independent work while a product decision is pending.
 
 Run adopted/native checks after reviewing command side effects. A broken tool is an error, not a clean check. If runtime updates are needed, use the installed gov-setup skill's preview/update ownership workflow when available; do not overwrite local edits or reach into a private source checkout. If unavailable, report that dependency and complete other work. Missing toolkit does not authorize installation.
 
