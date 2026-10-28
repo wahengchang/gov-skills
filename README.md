@@ -24,6 +24,8 @@ For adoption, invoke `$gov-setup` in the target repo. Installing skills makes in
 | [gov-check](skills/gov-check/SKILL.md) | Review an identified candidate with fresh mechanical and semantic evidence. |
 | [gov-maintain](skills/gov-maintain/SKILL.md) | Repair governance drift, consolidate rules and preserve useful protection. |
 
+New to the toolkit? Follow [getting started](docs/getting-started.md) for the first run, [usage scenarios](docs/usage-scenarios.md) for everyday use, and [troubleshooting](docs/troubleshooting.md) when something looks wrong.
+
 ### Which skill?
 
 In a target repo that already has the runtime, `node .governance/runtime/cli.mjs status --root . --json` reports the governance state and suggests a skill. It is read-only, runs no registered command, and the hint never overrides the task you ask for.
