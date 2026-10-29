@@ -28,4 +28,4 @@ Return one semantic outcome with scope and evidence:
 - **blocked**: a necessary prerequisite/decision/tool prevents a conclusion.
 - **partial**: useful subset checked, explicit uncovered areas remain.
 
-Include machine results and report/enforce modes separately, which requirements are covered only by review (no independently established check), which paths match no rule and whether a registered check covers them, verification not run, impact unknowns and any independent governance work completed. Avoid an unconditional pass if required evidence is absent.
+Include machine results and report/enforce modes separately, which requirements are covered only by review (no independently established check), which paths match no rule and whether a registered check is established to verify the relevant requirements, verification not run, impact unknowns and any independent governance work completed. Avoid an unconditional pass if required evidence is absent.
