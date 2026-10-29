@@ -18,7 +18,18 @@ Size the ticket so one pull request can deliver and verify it. If the request ne
 1. Resolve the target: the repository from the current Git remote, or the one the user named. Never file into a repository the user did not name or that is not the current remote.
 2. Search open issues for a duplicate with `gh issue list --search "<key words>" --state open`. A clear duplicate: report its link and stop; do not create a second ticket. A near match: create the ticket and cite it under Risks and unknowns.
 3. If `.governance/runtime/cli.mjs` exists, run `node .governance/runtime/cli.mjs status --root <repo> --json` and record the `state`. It runs no registered command. An `enforce-failing`, `invalid-contract` or `runtime-drift` state goes under Risks and unknowns as a precondition, because it will fail the pull request's governance check. If the runtime is absent or predates `status`, record "toolkit not installed" and use the project's own test command in the workflow instead of `check`; do not install or repair anything and do not run `check` just to fill a field.
-4. Read what the request touches: the authoritative docs, the real consumers and the existing protection. Name concrete paths in Scope. If the change adds or alters something other code depends on (a new node or entity type, a schema field, a public export, a cache key, a validation or UI surface), list those consumers under Governance impact. Do not claim a consumer list is complete; say what was traced.
+4. Read what the request touches: the authoritative docs, the real consumers and the existing protection. Name concrete paths in Scope and build the Change map: for each path that will be created, updated or deleted, find its governing source and its protection (see below). If the change adds or alters something other code depends on (a new node or entity type, a schema field, a public export, a cache key, a validation or UI surface), list those consumers under Governance impact. Do not claim a consumer list is complete; say what was traced.
+
+## Change map
+
+Every path the pull request will create, update or delete gets one row: action, governing source, protection. A later reviewer, human or `$gov-check`, can only judge a change against a source it is told about, so this is the most important part of the ticket.
+
+- Create: look at sibling files for the established pattern and find the document or rule that states it.
+- Update: find what the current file is bound by (rule, schema, contract doc) before describing the change.
+- Delete: list everything that references the path (rule `scope`, `source` or `proof`, check `paths` in `.governance/config.json`, links, imports) and say what happens to each. A missing check path is an error in every mode.
+- List only paths you can ground in the repository. Mark a planned new path as proposed, and put a path you cannot name yet under Risks and unknowns. Do not ask the user for paths.
+- If `.governance/rules.json` exists, match rules whose `scope` covers the path (it equals the path or is a parent directory; no globs) and copy their `source` and `enforcement`: a check id, with its mode taken from the `status` output or `config.json`, or `textReason`. Then check separately whether any registered check is established to verify the requirement, whatever the rule says, because checks run independently of rules. Read the check's script and result, not only its `paths`, which is a hint and for a `command` check only a label. A check over the file does not verify every requirement about its content. Report-mode findings do not fail CI; execution or configuration errors in a report-mode check still do. A `textReason` rule has no check attached through that rule.
+- Write `none found` or `none` when nothing applies. Do not invent a source or protection to fill a cell. Repeat every `none` and `text only` row under Risks and unknowns as review-only coverage, and when it exposes a pattern nobody guards, say so in the invariant question.
 
 ## Fill the template
 
@@ -28,6 +39,7 @@ Use [the template](references/template.md) exactly: same headings, same order, e
 - Write the body in the language of the request. Headings stay as in the template so tickets remain uniform.
 - Acceptance criteria are observable and testable: a behavior, a command and its expected result, a document that must say something. Not "works well".
 - Keep Scope concrete: paths in, paths and behaviors explicitly out.
+- For each create or update row that has a governing source, add a criterion that names the specific requirement from that source and how it is verified: a check id, or "review against <source>". Skip rows marked `none found`.
 - Do not invent facts. Unknowns go under Risks and unknowns with the question that resolves them.
 - Do not copy secrets, tokens or private logs into the body.
 

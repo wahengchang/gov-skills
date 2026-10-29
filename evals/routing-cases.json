@@ -548,5 +548,56 @@
       "Install a CLI, request credentials, or file the ticket in a different tracker.",
       "Fix the broken link."
     ]
+  },
+  {
+    "id": "issue-change-map-no-guess",
+    "prompt": "幫我開 issue：cms 新增 news/newFiles.js，刪除 news/legacy.js，並新增 cms/jobs/cleanup.js。",
+    "setup": [
+      "Create an isolated Git repository with a GitHub origin and an authenticated gh against a sandbox endpoint.",
+      "Install a valid governance setup with the registry check and a command check both in enforce mode and a passing full check. status reports enforced-unverified because it never runs command checks. rules.json has a rule whose scope is cms/modules, whose source is docs/cms-pattern.md and whose enforcement is a textReason, and a second rule whose enforcement is the command check and whose proof is cms/modules/news/legacy.js.",
+      "cms/modules/news/oldFiles.js shows the createHandler pattern. No document or rule governs the cms/jobs directory."
+    ],
+    "expectedPrimary": [
+      "gov-issue"
+    ],
+    "operation": "apply",
+    "requiredEvidence": [
+      "Fill a Change map with at least a create row for newFiles.js, a delete row for legacy.js and a create row for cleanup.js.",
+      "Cite docs/cms-pattern.md as the governing source of the newFiles.js row and mark its protection as text only because no check is established to cover this requirement, repeated under Risks and unknowns as review-only.",
+      "On the legacy.js row name the rule that lists it as proof and state that deleting it makes the registry check fail, and include a row or note for the required .governance/rules.json update.",
+      "Write none found for the governing source of cleanup.js and repeat it under Risks and unknowns.",
+      "Create exactly one issue directly, then read it back and report its link."
+    ],
+    "allowedWrites": [],
+    "forbiddenActions": [
+      "Invent a governing source or check for cleanup.js or any path that has none.",
+      "Leave the Change map out or fill it with unverified guesses.",
+      "Edit repository files or run the registered check commands."
+    ]
+  },
+  {
+    "id": "check-text-rule-source-review",
+    "prompt": "$gov-check Review this branch against main before I open the PR.",
+    "setup": [
+      "Create an isolated Git repository with a valid governance setup whose full check exits 0 and whose registry check is enforced.",
+      "rules.json has one entry with scope cms/modules, source docs/cms-pattern.md and a textReason enforcement. docs/cms-pattern.md says every module must export default createHandler(...).",
+      "The branch adds cms/modules/news/newFiles.js that uses require and a raw function, and deletes cms/modules/news/legacy.js, which is under the cms/modules scope but is not named by any rule field or check path. It also adds cms/jobs/cleanup.js, which is under no rule scope and no check paths."
+    ],
+    "expectedPrimary": [
+      "gov-check"
+    ],
+    "operation": "inspect",
+    "requiredEvidence": [
+      "Map newFiles.js and legacy.js to the cms/modules rule and read docs/cms-pattern.md.",
+      "Report newFiles.js as a violation of its source with file and impact, even though the machine check passes.",
+      "State that no check is attached through the cms/modules rule and that no registered check is established to verify the pattern, so the requirement is review-only, and list cms/jobs/cleanup.js as rule-uncovered after judging it against the traced contracts.",
+      "Return issues with machine results and semantic judgments separate."
+    ],
+    "allowedWrites": [],
+    "forbiddenActions": [
+      "Report pass because the registered check exited 0.",
+      "Edit the reviewed source or add a check to make it pass.",
+      "Report cms/jobs/cleanup.js as covered by a rule or by the passing machine check."
+    ]
   }
 ]

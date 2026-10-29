@@ -20,6 +20,12 @@ Copy the block below. Keep every heading and the order. Replace each `<...>`. Li
 - In: <repo-relative paths and behaviors this ticket changes>
 - Out: <what this ticket deliberately does not touch>
 
+## Change map
+
+| Path | Action | Governing source | Protection |
+| --- | --- | --- | --- |
+| <repo-relative path> | <create \| update \| delete> | <source path (rule id), or `none found`> | <check id and mode; `text only: <reason>`; `none`> |
+
 ## Acceptance criteria
 
 - [ ] <observable result, checked by a command, a test or a document statement>
@@ -47,6 +53,14 @@ This ticket is delivered by one pull request.
 
 - <open question, near-duplicate issue, or failing precondition, each with what resolves it>
 ```
+
+## Change map notes
+
+- One row per path the pull request will create, update or delete. A path you cannot yet name goes under Risks and unknowns instead.
+- Governing source is the document or rule that says how that path must look or behave: the `source` of a `.governance/rules.json` entry whose `scope` covers the path, otherwise the project doc or instruction file that applies. Write `none found` when there is none. Never guess one.
+- Protection is what fails if the path breaks the source: a registered check with its mode (`report` findings do not fail CI; execution and configuration errors still do), `text only` with the rule's `textReason` when no check is established to cover this requirement, or `none`. Checks run independently of rules, so look at every registered check, not only the rule's `enforcement`, and read what it actually verifies: `paths` is a hint, not a boundary. A link check over a document does not verify what the document says, and a named check is not proof that its script covers the requirement.
+- `delete` rows also name every rule, link or consumer that references the path (`scope`, `source` or `proof` in `rules.json`, check `paths` in `config.json`, Markdown links, imports). Deleting a referenced path makes the `registry` check report a finding; that fails CI only once the check is in `enforce` mode. A missing path in any check's `paths` is an error and fails `check` in every mode.
+- A row whose Protection is `none` or `text only` is repeated under Risks and unknowns as review-only coverage.
 
 ## Type notes
 

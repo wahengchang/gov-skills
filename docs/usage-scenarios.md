@@ -122,6 +122,7 @@ $gov-issue Add a "retry" node type to the flow engine.
 
 It creates one GitHub issue directly, with no confirmation step, from a fixed template: summary and type, scope, acceptance criteria, a workflow checklist, governance impact, and risks. The checklist is the everyday loop: develop, run `check` and your tests before push, `$gov-check` before the PR, `$gov-doc-sync` if behavior or docs changed, CI, and after merge the question "did this create something that must never break?" (if yes, `$gov-rule`).
 
+- It adds a Change map: every path to be created, updated or deleted, with the document or rule that governs it and what would fail if it were broken. Rows whose protection is `none` or `text only` are called out as review-only, so the reviewer knows no check will catch them. A path it cannot ground in the repository is listed as unknown, never guessed.
 - One ticket is one pull request. If your request needs several, it proposes the split and waits for your OK before creating any ticket.
 - It searches open issues first and stops with a link if one already covers the work.
 - If `.governance/` is installed it reads `status` and records the state in the ticket. It never runs `check`, edits files or adds labels, assignees or milestones unless you ask.

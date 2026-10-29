@@ -1,0 +1,105 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 356" width="920" height="356" role="img" aria-labelledby="t d">
+  <title id="t">A pull request with a pattern violation travels through the layers</title>
+  <desc id="d">Two lanes carry the same violating file. In the top lane the check is in enforce mode, so CI turns red and the file never reaches branch protection. In the bottom lane the check is still in report mode, so CI stays green and the file merges with the violation. The hook, the local check and the AI review never stop it in either lane.</desc>
+  <style>
+    .card { fill: #f6f8fa; stroke: #d0d7de; }
+    text { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; fill: #1f2328; }
+    .title { font-size: 20px; font-weight: 600; }
+    .lane { font-size: 17px; font-weight: 600; }
+    .name { font-size: 16px; font-weight: 600; text-anchor: middle; }
+    .sub { font-size: 13px; text-anchor: middle; fill: #57606a; }
+    .rail { stroke: #afb8c1; stroke-width: 3; stroke-linecap: round; }
+    .box { fill: #ffffff; stroke: #afb8c1; stroke-width: 2; }
+    .soft { stroke-dasharray: 5 4; }
+    .hard { stroke: #1f2328; }
+    .packet { fill: #9a6700; }
+    .bad { fill: #cf222e; font-size: 15px; font-weight: 700; text-anchor: middle; }
+    .good { fill: #1a7f37; font-size: 15px; font-weight: 700; text-anchor: middle; }
+    .warn { fill: #9a6700; font-size: 15px; font-weight: 700; text-anchor: middle; }
+    .xmark { stroke: #cf222e; stroke-width: 5; stroke-linecap: round; }
+    .legend { font-size: 13px; fill: #57606a; }
+
+    /* Default (and reduced motion): the final state, fully readable without animation. */
+    #p1 { transform: translateX(530px); }
+    #p2 { transform: translateX(810px); }
+
+    @media (prefers-reduced-motion: no-preference) {
+      #p1 { transform: translateX(0); animation: run1 14s ease-in-out infinite; }
+      #p2 { transform: translateX(0); animation: run2 14s ease-in-out infinite; }
+      #red, #stop { opacity: 0; animation: show1 14s linear infinite; }
+      #green, #merged { opacity: 0; animation: show2 14s linear infinite; }
+    }
+    @keyframes run1 {
+      0%, 4%   { transform: translateX(0); }
+      14%      { transform: translateX(110px); }
+      22%      { transform: translateX(110px); }
+      32%      { transform: translateX(250px); }
+      40%      { transform: translateX(250px); }
+      50%      { transform: translateX(390px); }
+      58%      { transform: translateX(390px); }
+      68%, 100%{ transform: translateX(530px); }
+    }
+    @keyframes run2 {
+      0%, 4%   { transform: translateX(0); }
+      14%      { transform: translateX(110px); }
+      22%      { transform: translateX(110px); }
+      32%      { transform: translateX(250px); }
+      40%      { transform: translateX(250px); }
+      50%      { transform: translateX(390px); }
+      58%      { transform: translateX(390px); }
+      68%      { transform: translateX(530px); }
+      74%      { transform: translateX(530px); }
+      84%, 100%{ transform: translateX(810px); }
+    }
+    @keyframes show1 { 0%, 68% { opacity: 0; } 72%, 94% { opacity: 1; } 100% { opacity: 0; } }
+    @keyframes show2 { 0%, 84% { opacity: 0; } 88%, 94% { opacity: 1; } 100% { opacity: 0; } }
+  </style>
+
+  <rect class="card" x="1" y="1" width="918" height="354" rx="12"/>
+  <text class="title" x="30" y="38">One file that breaks a pattern, two possible outcomes</text>
+
+  <!-- Station headings (shared by both lanes) -->
+  <g>
+    <text class="name" x="150" y="80">Hook</text><text class="sub" x="150" y="97">advisory</text>
+    <text class="name" x="290" y="80">check</text><text class="sub" x="290" y="97">you run it</text>
+    <text class="name" x="430" y="80">$gov-check</text><text class="sub" x="430" y="97">AI review</text>
+    <text class="name" x="570" y="80">CI</text><text class="sub" x="570" y="97">runs check</text>
+    <text class="name" x="710" y="80">Branch protection</text><text class="sub" x="710" y="97">GitHub setting</text>
+    <text class="name" x="850" y="80">main</text>
+  </g>
+
+  <!-- Lane 1: enforce -->
+  <text class="lane" x="30" y="132">Check is in enforce mode</text>
+  <line class="rail" x1="40" y1="170" x2="850" y2="170"/>
+  <g>
+    <rect class="box soft" x="125" y="150" width="50" height="40" rx="8"/>
+    <rect class="box soft" x="265" y="150" width="50" height="40" rx="8"/>
+    <rect class="box soft" x="405" y="150" width="50" height="40" rx="8"/>
+    <rect class="box hard" x="545" y="150" width="50" height="40" rx="8"/>
+    <rect class="box hard" x="685" y="150" width="50" height="40" rx="8"/>
+    <rect class="box" x="825" y="150" width="50" height="40" rx="8"/>
+  </g>
+  <g id="p1"><circle class="packet" cx="40" cy="170" r="13"/><text x="40" y="175" text-anchor="middle" style="fill:#fff;font-size:12px;font-weight:700;font-family:sans-serif">js</text></g>
+  <g id="red">
+    <line class="xmark" x1="556" y1="154" x2="584" y2="186"/><line class="xmark" x1="584" y1="154" x2="556" y2="186"/>
+    <text class="bad" x="570" y="214">CI red: exit 1</text>
+  </g>
+  <g id="stop"><text class="bad" x="710" y="214">never reached</text></g>
+
+  <!-- Lane 2: report -->
+  <text class="lane" x="30" y="232">Check is still in report mode</text>
+  <line class="rail" x1="40" y1="270" x2="850" y2="270"/>
+  <g>
+    <rect class="box soft" x="125" y="250" width="50" height="40" rx="8"/>
+    <rect class="box soft" x="265" y="250" width="50" height="40" rx="8"/>
+    <rect class="box soft" x="405" y="250" width="50" height="40" rx="8"/>
+    <rect class="box hard" x="545" y="250" width="50" height="40" rx="8"/>
+    <rect class="box hard" x="685" y="250" width="50" height="40" rx="8"/>
+    <rect class="box" x="825" y="250" width="50" height="40" rx="8"/>
+  </g>
+  <g id="p2"><circle class="packet" cx="40" cy="270" r="13"/><text x="40" y="275" text-anchor="middle" style="fill:#fff;font-size:12px;font-weight:700;font-family:sans-serif">js</text></g>
+  <g id="green"><text class="good" x="570" y="314">CI green: exit 0</text></g>
+  <g id="merged"><text class="warn" x="895" y="314" style="text-anchor:end">merged with the violation</text></g>
+
+  <text class="legend" x="30" y="340">Dashed box: cannot stop the change. Solid box: can stop it, if the check is enforced and the branch is protected.</text>
+</svg>
