@@ -563,7 +563,7 @@
     "operation": "apply",
     "requiredEvidence": [
       "Fill a Change map with at least a create row for newFiles.js, a delete row for legacy.js and a create row for cleanup.js.",
-      "Cite docs/cms-pattern.md as the governing source of the newFiles.js row and mark its protection as text only because no registered check covers it, repeated under Risks and unknowns as review-only.",
+      "Cite docs/cms-pattern.md as the governing source of the newFiles.js row and mark its protection as text only because no check is established to cover this requirement, repeated under Risks and unknowns as review-only.",
       "On the legacy.js row name the rule that lists it as proof and state that deleting it makes the registry check fail, and include a row or note for the required .governance/rules.json update.",
       "Write none found for the governing source of cleanup.js and repeat it under Risks and unknowns.",
       "Create exactly one issue directly, then read it back and report its link."
@@ -590,7 +590,7 @@
     "requiredEvidence": [
       "Map newFiles.js and legacy.js to the cms/modules rule and read docs/cms-pattern.md.",
       "Report newFiles.js as a violation of its source with file and impact, even though the machine check passes.",
-      "State that no check is attached through the cms/modules rule and that no registered check covers cms/modules, so the requirement is review-only, and list cms/jobs/cleanup.js as rule-uncovered after judging it against the traced contracts.",
+      "State that no check is attached through the cms/modules rule and that no registered check is established to verify the pattern, so the requirement is review-only, and list cms/jobs/cleanup.js as rule-uncovered after judging it against the traced contracts.",
       "Return issues with machine results and semantic judgments separate."
     ],
     "allowedWrites": [],

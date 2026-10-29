@@ -22,7 +22,7 @@ Three kinds of protection, strongest first:
 | --- | --- | --- |
 | **Design** | The invalid state cannot be written, for example a type or a module boundary. | Yes, when the build runs in CI |
 | **Mechanical** | A registered check fails, for example a lint rule or an import-rule script. | Yes, once enforced and required |
-| **Semantic** | A written rule that a reviewer or `$gov-check` judges against its source document. [How it works](semantic-review.md) | **No.** Review, unless a separate check also covers it |
+| **Semantic** | A written rule that a reviewer or `$gov-check` judges against its source document. [How it works](semantic-review.md) | **No.** Review, unless a check is established to verify it |
 
 ## Level 2: what happens to a bad file (2 minutes)
 
@@ -115,14 +115,15 @@ A new check starts in `report`. `activate` makes it `enforce` only when a fresh 
 
 &nbsp;
 
-| The path is... | Covered by | A review can say |
+| The requirement is... | Covered by | A review can say |
 | --- | --- | --- |
-| In a rule's scope, rule has a check | That check, plus review of the `source` | Machine result and judgment, kept separate |
-| In a rule's scope, rule has `textReason` | Review, plus any check whose `paths` cover it | "No check is attached through this rule" |
-| Outside every rule, inside a check's `paths` | That check, if its script covers it | "Checked, no rule documents it" |
-| In neither | No registered check covers it | "Rule-uncovered", judged against traced contracts |
+| Named by a rule that has a check | That check, only if its behavior is established to verify it, plus review of the `source` | Machine result and judgment, kept separate |
+| Named by a rule with `textReason` | Review, plus any check established to verify it | "No check is attached through this rule" |
+| Not named by any rule | Any check established to verify it, otherwise review of traced contracts | "Rule-uncovered", judged against traced contracts |
 
-Rule scope and check coverage are separate. The runtime does not verify that a rule's named check covers its scope. The hook uses check `paths`: it runs `links` for any edit, `registry` for paths a rule references, and every quick check when `config.json` or `rules.json` is edited.
+Coverage is judged per requirement from what a check actually does, not from where its `paths` point. `paths` is a hint, and for a `command` check only a label: a command labelled `scripts` can still catch a violation under `cms/modules`, and a link check over `docs` passes an error page that only says "Something went wrong."
+
+Rule scope and check coverage are separate. The runtime does not verify that a rule's named check covers its scope. The hook does use check `paths`, to decide when to run: it runs `links` for any edit, `registry` for paths a rule references, and every quick check when `config.json` or `rules.json` is edited.
 
 </details>
 
@@ -186,7 +187,7 @@ Every module under `cms/modules` must `export default createHandler(...)`, as wr
 3. Register the check in `report` mode and record the rule in `rules.json`.
 4. Clear every finding, then `activate`.
 5. Make CI run `check`, require it in branch protection, and require review for `.governance/` and the check scripts.
-6. If a mechanical check is unsuitable, record a `textReason` and accept that review is the only coverage unless a separate check also covers those paths.
+6. If a mechanical check is unsuitable, record a `textReason` and accept that review is the only coverage unless a check is established to verify the requirement.
 
 </details>
 
